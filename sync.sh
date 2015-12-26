@@ -21,7 +21,7 @@ list)
 	echo "listing remote ...."
 	;;
 
-*)	echo "usage: sync.sh restore | backup"
+*)	echo "usage: sync.sh  backup | restore | list"
 ;;
 
 esac
