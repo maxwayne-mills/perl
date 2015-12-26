@@ -31,6 +31,7 @@ list)
 
 *)	
 	echo "usage: $0 {backup | restore | list}"
+	exit $1
 	;;
 
 esac
