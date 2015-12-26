@@ -7,7 +7,7 @@
 # Relies on PKI keys installed on both servers
 
 user=17847
-server=17847@ch-s011.rsync.net
+server=ch-s011.rsync.net
 
 case $1 in
 
