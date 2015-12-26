@@ -29,7 +29,8 @@ list)
 	ssh 17847@ch-s011.rsync.net ls -la
 	;;
 
-*)	echo "usage: sync.sh  backup | restore | list"
-;;
+*)	
+	echo "usage: $0 {backup | restore | list}"
+	;;
 
 esac
