@@ -1,5 +1,7 @@
-# Script to backup Web directory to Rsync.net
 #! /bin/sh -x
+# Script to backup Web directory to Rsync.net
+# Created by Clarence Mills cmills@opensitesolutions.com
+# Open Source license
 
 # Relies on PKI keys installed on both servers
 
