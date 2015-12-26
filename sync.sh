@@ -19,6 +19,7 @@ restore)
 list)
 	# List remote directories on backup server
 	echo "listing remote ...."
+	ssh 17847@ch-s011.rsync.net ls -la
 	;;
 
 *)	echo "usage: sync.sh  backup | restore | list"
