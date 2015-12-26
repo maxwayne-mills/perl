@@ -30,7 +30,7 @@ list)
 	;;
 
 *)	
-	echo "usage: $0 {backup | restore | list}"
+	echo "usage: basename $0 {backup | restore | list}"
 	exit $1
 	;;
 
