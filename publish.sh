@@ -1,5 +1,6 @@
 #!/bin/sh -x
  
+# Publish from git to your web directory
 
 case $1 in
 
