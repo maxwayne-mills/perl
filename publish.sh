@@ -1,5 +1,6 @@
-#!/bin/sh -x
- 
+#!/bin/sh 
+set -ex 
+
 # Publish from git to your web directory
 # Repos
 repos=/opt/git/web
@@ -7,6 +8,14 @@ dir=$2
 
 case $1 in
 
+create)
+	# Cd into reposiory
+	cd $repos/$dir
+
+	git checkout dev
+
+	sudo git archive --format=tar --output /tmp/$dir.tar HEAD
+	;;
 publish)
 	# Cd into the repostiory of your choice
 	cd $repos/$dir
