@@ -18,13 +18,7 @@ create_archive()
 case $1 in
 
 create)
-	# Cd into reposiory
-	cd $repos/$dir
-
-	# checkout dev repository, regardless if it's already checked - no way to verify
-	git checkout dev
-
-	sudo git archive --format=tar --output /tmp/$dir.tar HEAD
+	create_archive
 	;;
 publish)
 	# Cd into the repostiory of your choice
