@@ -6,12 +6,22 @@ set -ex
 repos=/opt/git/web
 dir=$2
 
+create_archive()
+{
+	#cd into repository
+	cd $repos/$dir
+
+	#Checkout dev repository
+	sudo git archive --format=tar --output /tmp/$dir.tar HEAD
+}
+
 case $1 in
 
 create)
 	# Cd into reposiory
 	cd $repos/$dir
 
+	# checkout dev repository, regardless if it's already checked - no way to verify
 	git checkout dev
 
 	sudo git archive --format=tar --output /tmp/$dir.tar HEAD
