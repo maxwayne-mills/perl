@@ -1,12 +1,9 @@
 #! /bin/sh
 
 srcdir="/var/www/html/opensitesolutions.com"
-<<<<<<< HEAD
 scanfile=`md5sum $srcdir/tag.html`
 echo $scanfile >> /tmp/tagcheck.txt
-=======
 scanfile=`md5sum $srcdir/tag.html | awk '{print $1}'`
->>>>>>> fb4196bf4e9baa95d969662cf86df175fb7938eb
 
 case $1 in
 
