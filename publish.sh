@@ -9,9 +9,9 @@ dir=$2
 
 create_archive()
 {
-	base=$dir
+	base=`basename $dir`
 	#cd into repository
-	cd $repos/$base
+	cd $repos$base
 
 	#Checkout dev repository
 	sudo git archive --format=tar --output /tmp/$base.tar HEAD
@@ -27,13 +27,14 @@ publish)
 	create_archive
 
 	# Untar the arive to destination directory
-	base=$dir
+	base=`basename $dir`
 	sudo tar -xvf /tmp/$base.tar -C $webdir/$base --overwrite
 
 	# List destination directory
-	ls -lart $webdir/$dir
+	ls -lart $webdir$base
 	;;
 *)
 	echo "usage: $basename $0 | publish <path to git repository"
+	echo "usage: $basename $0 | create <path to git repository"
 	;;
 esac
