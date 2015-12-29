@@ -1,18 +1,20 @@
 #!/bin/sh 
-set -ex 
+set -xv 
 
 # Publish from git to your web directory
 # Repos
+webdir=/var/www/html
 repos=/opt/git/web
 dir=$2
 
 create_archive()
 {
+	base=$dir
 	#cd into repository
-	cd $repos/$dir
+	cd $repos/$base
 
 	#Checkout dev repository
-	sudo git archive --format=tar --output /tmp/$dir.tar HEAD
+	sudo git archive --format=tar --output /tmp/$base.tar HEAD
 }
 
 case $1 in
@@ -21,20 +23,15 @@ create)
 	create_archive
 	;;
 publish)
-	# Cd into the repostiory of your choice
-	cd $repos/$dir
-
-	# Get status of the branch currently checked out and if there are any files that are note being tracked or committed
-	git checkout dev
-
 	# Create the arhive
-	sudo git archive  --format=tar --output /tmp/$dir.tar HEAD
+	create_archive
 
 	# Untar the arive to destination directory
-	sudo tar -xvf /tmp/$dir.tar -C /var/www/html/$dir --overwrite
+	base=$dir
+	sudo tar -xvf /tmp/$base.tar -C $webdir/$base --overwrite
 
 	# List destination directory
-	ls -lart /var/www/html/$dir
+	ls -lart $webdir/$dir
 	;;
 *)
 	echo "usage: $basename $0 | publish <path to git repository"
