@@ -18,6 +18,9 @@ create_archive()
 
 	#Create archinve
 	sudo git archive --format=tar --output /tmp/$base.tar HEAD
+	
+	#Checkout the master head
+	git checkout master
 }
 
 case $1 in
