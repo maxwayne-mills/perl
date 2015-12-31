@@ -20,6 +20,7 @@ create_archive()
 	sudo git archive --format=tar --output /tmp/$base.tar HEAD
 	
 	#Checkout the master head
+	cd $repos
 	git checkout master
 }
 
