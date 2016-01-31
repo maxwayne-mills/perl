@@ -13,7 +13,7 @@ create)
 	echo $scanfile >> /tmp/tagcheck.txt
 	;;
 check)
-	if `(md45um $srcdir/tag.html | awk '{print $1}') == (cat /tmp/tagcheck.txt)` than
+	if `(md5um $srcdir/tag.html | awk '{print $1}') == (cat /tmp/tagcheck.txt)` than
 		echo "do something"
 	else
 		echo "do nothing"
