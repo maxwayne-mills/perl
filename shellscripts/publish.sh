@@ -1,5 +1,5 @@
-#!/bin/sh
-# set -xv
+#!/bin/sh 
+set -xv 
 
 # Publish from git to your web directory
 # Repos
@@ -18,7 +18,7 @@ create_archive()
 
 	#Create archinve
 	sudo git archive --format=tar --output /tmp/$base.tar HEAD
-
+	
 	#Checkout the master head
 	cd $repos
 	git checkout master
@@ -28,12 +28,11 @@ case $1 in
 
 create)
 	create_archive
-	ls -la /tmp/$base.tar
 	;;
 publish)
 	# Create the arhive
 	create_archive
-
+	
 	#Clear out the directory
 	sudo rm -rf $webdir/*
 
@@ -46,6 +45,6 @@ publish)
 	;;
 *)
 	echo "usage: $basename $0 | publish <git repository> <web directory>"
-	echo "usage: $basename $0 | create <git repository directory>"
+	echo "usage: $basename $0 | create <git repository <web directory>"
 	;;
 esac
