@@ -1,5 +1,5 @@
-#!/bin/sh 
-set -xv 
+#!/bin/sh
+# set -xv 
 
 # Publish from git to your web directory
 # Repos
@@ -18,7 +18,7 @@ create_archive()
 
 	#Create archinve
 	sudo git archive --format=tar --output /tmp/$base.tar HEAD
-	
+
 	#Checkout the master head
 	cd $repos
 	git checkout master
@@ -32,7 +32,7 @@ create)
 publish)
 	# Create the arhive
 	create_archive
-	
+
 	#Clear out the directory
 	sudo rm -rf $webdir/*
 
