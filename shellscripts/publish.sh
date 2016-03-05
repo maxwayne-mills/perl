@@ -1,5 +1,5 @@
 #!/bin/sh
-# set -xv 
+# set -xv
 
 # Publish from git to your web directory
 # Repos
@@ -28,6 +28,7 @@ case $1 in
 
 create)
 	create_archive
+	ls -la /tmp/$base.tar
 	;;
 publish)
 	# Create the arhive
@@ -45,6 +46,6 @@ publish)
 	;;
 *)
 	echo "usage: $basename $0 | publish <git repository> <web directory>"
-	echo "usage: $basename $0 | create <git repository <web directory>"
+	echo "usage: $basename $0 | create <git repository directory>"
 	;;
 esac
