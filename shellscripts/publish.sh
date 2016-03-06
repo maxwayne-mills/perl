@@ -22,6 +22,10 @@ create_archive()
 	#Checkout the master head
 	cd $repos
 	git checkout master
+
+	# List tmp directory to confirm tar file was created.
+	ls -alrt /tmp
+
 }
 
 case $1 in
