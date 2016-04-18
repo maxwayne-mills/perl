@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # API used to manage and create Scaleway servers on CLI.
+# obtain access key and token from scaleway portal.
 
 
 header(){
