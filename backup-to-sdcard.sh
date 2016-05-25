@@ -1,5 +1,8 @@
 #!/bin/bash
-# Back up files to sdcard
+
+# Backup files to a mounted sdcard
+# Script created on a Ubuntu trusty OS
+# Dependencies are rsync
 
 # check to see if sdcard is mounted
 dest=$(mount | grep -i sdcard | awk '{print $3}')
