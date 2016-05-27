@@ -9,7 +9,8 @@ dest=$(mount | grep -i sdcard | awk '{print $3}')
 # find and use locally installed rsync binary
 rsync=`which rsync`
 
-if [ $dest ]; then
+# Check to see if the dest exists and is read and writeable
+if [ $dest -a -rw ]; then
 	rsync -avz ~/.ssh $dest/ssh-configs
 	rsync -avz ~/.gitconfig $dest/git
 	rsync -avz --exclude=REC*.WAV --delete-excluded ~/Documents $dest/
