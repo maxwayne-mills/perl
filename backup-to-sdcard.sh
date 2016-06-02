@@ -13,7 +13,7 @@ rsync=`which rsync`
 if [ $dest -a -rw ]; then
 	rsync -avz ~/.ssh $dest/ssh-configs
 	rsync -avz ~/.gitconfig $dest/git
-	rsync -avz --exclude=REC*.WAV --delete-excluded ~/Documents $dest/
+	rsync -avz --exclude=VOICE --exclude=REC*.WAV --delete-excluded ~/Documents $dest/
 	#tree $dest/
 	du -hs $dest
 	exit 0
