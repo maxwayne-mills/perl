@@ -14,10 +14,11 @@ if [ $dest -a -rw ]; then
 	rsync -avz ~/.ssh $dest/ssh-configs
 	rsync -avz ~/.gitconfig $dest/git
 	rsync -avz --exclude=VOICE --exclude=REC*.WAV --delete-excluded ~/Documents $dest/
-	#tree $dest/
-	du -hs $dest
+	
+	# Display free and used space.
+	df -h $dest
 	exit 0
 else
-	echo "sdcard is not mounted, insert and mount sdcard before proceding"
+	echo "sdcard is not mounted, insert and mount sdcard before proceeding"
 	exit 0
 fi 
