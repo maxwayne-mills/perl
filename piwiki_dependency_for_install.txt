@@ -1,0 +1,5 @@
+php-mbstring.x86_64
+php-mbstring.x86_64
+You should enable the dom extension (e.g., install the php-dom and/or php-xml package). 
+ GD > 2.x + Freetype (graphics)
+gd.x86_64 : A graphics library for quick creation of PNG or JPEG images
