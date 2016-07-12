@@ -80,25 +80,28 @@ read location
 # Create hashed password
 pass=`openssl passwd -crypt Temp1234`
  
-# add user using useradd and fields enter above
+# add user using useradd and fields entered from above
 set -x
 ssh -tt $CONNECT sudo groupadd $user -f -g $groupid
 echo $?
 
-ssh -tt $CONNECT sudo useradd -u $uuid -g $groupid -d $location -p $pass $user
+ssh -tt $CONNECT sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $user
 echo $?
+
+#ssh -tt $CONNECT sudo usermod -m -d $location $user
+#echo $?
 }
  
 delete-user()
 {
 if [ -z $USER ];then
-        echo "Enter username"
+        echo -n "Enter username"
         read username
         USER=$username
         echo "Deleting user:$USER on Server:$RMT_SERVER"
         ssh -tt $CONNECT sudo userdel -fr $USER
 else
-        echo "Deleting user:$USER on Server:$RMT_SERVER"
+        echo -n "Deleting user:$USER on Server:$RMT_SERVER"
         ssh -tt $CONNECT sudo userdel -r $USER
 fi
 }
