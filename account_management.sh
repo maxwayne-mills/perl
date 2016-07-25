@@ -124,6 +124,33 @@ else
 	done
 fi
 }
+
+delete-user(){
+set -xv
+username=$2
+file=$3
+
+if [ -z $file ];then
+	echo "enter file"
+	read file
+	for line in $(cat $file); do
+		echo "$line"
+		rmt_server=$line
+		echo "Deleting user: $username"
+		ssh -tt $user@$rmt_server sudo userdel -f $username
+		echo ""
+	done
+else
+	for line in $(cat $file); do
+		echo "$line"
+		rmt_server=$line
+		echo "Deleting user: $username"	
+		ssh -tt $user@$rmt_server sudo userdel -f $username
+		echo ""
+	done
+fi
+
+}
  
 # Start program
 rmt_user=$2
@@ -137,7 +164,9 @@ search|s|-s)
 add-user|adduser|-a|a)
 	add-user
 	;;
-
+delete|userdel)
+	delete-user $1 $2
+	;;
 *)
         usage
         ;;
