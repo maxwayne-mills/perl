@@ -3,8 +3,9 @@
 user=cmills
  
 usage(){
-        echo "`basename $0` search username servername"
+        echo "`basename $0` search username"
         echo "`basename $0` adduser "
+        echo "`basename $0` deluser "
 }
  
 check_username(){
@@ -138,6 +139,7 @@ if [ -z $file ];then
 		rmt_server=$line
 		echo "Deleting user: $username"
 		ssh -tt $user@$rmt_server sudo userdel -f $username
+		echo $?
 		echo ""
 	done
 else
@@ -146,6 +148,7 @@ else
 		rmt_server=$line
 		echo "Deleting user: $username"	
 		ssh -tt $user@$rmt_server sudo userdel -f $username
+		echo $?
 		echo ""
 	done
 fi
