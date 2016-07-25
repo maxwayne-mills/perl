@@ -4,12 +4,13 @@ user=cmills
  
 usage(){
         echo "`basename $0` search username servername"
-        echo "`basename $0` adduser username servername"
+        echo "`basename $0` adduser "
 }
  
 check_username(){
-set -x
+#set -x
 rmt_user=$1
+clear
  
 if [ -z $rmt_user ];then
         echo -n "Enter username to search for: "
@@ -22,8 +23,9 @@ fi
 }
  
 check_servername(){
-set -x
+#set -x
 rmt_server=$1
+clear
  
 if [ -z $rmt_server ];then
         echo "Enter servername: "
@@ -36,24 +38,52 @@ fi
 }
  
 search(){
-set -vx
+#set -vx
+
 rmt_user=$1
 rmt_server=$2
-	# Searching /etc/passwd file 
-	echo "Searching passwd file"
-        ssh $user@$rmt_server grep $rmt_user /etc/passwd
-	# Searching /etc/group file 
-	echo "Searching group file"
-        ssh $user@$rmt_server grep $rmt_user /etc/group
+clear
+if [ -z $file ];then
+	echo "enter file"
+	read file
+	for line in $(cat $file); do
+		echo "$line"
+		rmt_server=$line
+		# Searching /etc/passwd file 
+		echo "Searching passwd file"
+        	ssh $user@$rmt_server grep $rmt_user /etc/passwd
+		echo ""
+		# Searching /etc/group file 
+		echo "Searching group file"
+       		ssh $user@$rmt_server grep $rmt_user /etc/group
+		echo ""
+	done
+else
+	for line in $(cat $file); do
+		echo "$line"
+		rmt_server=$line
+		# Searching /etc/passwd file 
+		echo "Searching passwd file"
+        	ssh $user@$rmt_server grep $rmt_user /etc/passwd
+		echo ""
+		# Searching /etc/group file 
+		echo "Searching group file"
+       		ssh $user@$rmt_server grep $rmt_user /etc/group
+		echo ""
+	done
+fi
 }
 
 add-user(){
-set -xv
+#set -xv
+# Create hashed password
+pass=`openssl passwd -crypt Temp1234`
+clear
 
 echo -n "Enter username: "
 read username
 
-echo -n "Enter Comment: "
+echo -en "Enter Comment: "
 read comment
 
 echo -n "Enter UID: "
@@ -65,34 +95,34 @@ read groupid
 echo -n "Enter home directory: "
 read location
 
-echo -n "Enter hostname: "
-read host
-rmt_server=$host
-
-# Create hashed password
-pass=`openssl passwd -crypt Temp1234`
-
-# add user using /etc/group
-#set -x
-
-echo "Adding user:$user to /etc/group"
-ssh -tt $user@$rmt_server sudo groupadd $username -f -g $groupid
-echo $?
-
-# add user to /etc/passwd
-echo "Creating $user acount on $rmt_server"
-ssh -tt $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
-echo $?
-
-# Expire password forcing the user to set password on first-login
-ssh -tt $user@$rmt_server sudo chage -d 0 $username
-echo $?
-
-#Update GECOS files
-ssh -tt $user@$rmt_server sudo chfn $username -o "$comment"
-echo $?
-
-
+file=$2
+if [ -z $file ];then
+	echo  "enter file"
+	read file
+	for line in $(cat $file); do
+		echo "$line"
+		rmt_server=$line
+		echo "Adding user:$username to /etc/group"
+		ssh -tt $user@$rmt_server sudo groupadd $username -f -g $groupid
+		echo "Creating $username acount on $rmt_server"
+		ssh -tt $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
+		echo ""
+		ssh -tt $user@$rmt_server sudo chage -d 0 $username
+		echo ""
+	done
+else
+	for line in $(cat $file); do
+		echo "$line"
+		rmt_server=$line
+		echo "Adding user:$username to /etc/group"
+		ssh -tt $user@$rmt_server sudo groupadd $username -f -g $groupid
+		echo "Creating $username acount on $rmt_server"
+		ssh -tt $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
+		echo ""
+		ssh -tt $user@$rmt_server sudo chage -d 0 $username
+		echo ""
+	done
+fi
 }
  
 # Start program
@@ -102,10 +132,9 @@ rmt_server=$3
 case $1 in
 search|s|-s)
         check_username $rmt_user
-        check_servername $rmt_server
         search $rmt_user $rmt_server
         ;;
-add-user|-a|a)
+add-user|adduser|-a|a)
 	add-user
 	;;
 
