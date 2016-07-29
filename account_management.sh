@@ -4,7 +4,7 @@
 # Depeendency: PKI key in place on each remote-server to provide secure passwordless connection
 # Sudo files in place to allow usage of User account managment applications
  
-user=cmills
+user=root
  
 usage(){
 	scriptname=`basename $0`
@@ -155,17 +155,17 @@ if [ -z $file ];then
 		rmt_server=$line
 		echo ""
 		echo "Adding user:$username to /etc/group"
-		ssh -q -t $user@$rmt_server sudo groupadd $username -f -g $groupid
+		ssh -q -t $user@$rmt_server sudo groupadd $username -g $groupid
 		echo ""
 		echo "Creating $username on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
 		echo $?
 		ssh -q -t $user@$rmt_server sudo chfn -f "$comment" $username
 		echo $?
-		ssh -q -t $user@$rmt_server sudo chage -d0 $username
+		ssh -q -t $user@$rmt_server sudo chage -d 0 $username
 		echo $?
 		# Set account expiration date 
-		ssh -q -t $user@$rmt_server sudo chage -E $today -m 90 -M 90 $username
+		ssh -q -t $user@$rmt_server sudo chage -m 90 -M 90 $username
 
 		# Specify inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
@@ -180,14 +180,14 @@ else
 		rmt_server=$line
 		echo ""
 		echo "Adding user:$username to /etc/group"
-		ssh -q -t $user@$rmt_server sudo groupadd $username -f -g $groupid
+		ssh -q -t $user@$rmt_server sudo groupadd $username -g $groupid
 		echo ""
 		echo "Creating $username on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
 		echo $?
 		ssh -q -t $user@$rmt_server sudo chfn -f "$comment" $username
 		echo $?
-		ssh -q -t $user@$rmt_server sudo chage -d0 $username
+		ssh -q -t $user@$rmt_server sudo chage -d 0 $username
 		echo $?
 		# Set account expiration date 
 		ssh -q -t $user@$rmt_server sudo chage -E $today -m 90 -M 90 $username
@@ -214,7 +214,7 @@ if [ -z $file ];then
 		rmt_server=$line
 		echo ""
 		echo "Deleting user: $rmt_user on $rmt_server"
-		ssh -q -t $user@$rmt_server sudo userdel -fr $rmt_user
+		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
 		echo $?
 	done
 else
@@ -223,7 +223,7 @@ else
 		rmt_server=$line
 		echo ""
 		echo "Deleting user: $rmt_usere on $rmt_server"	
-		ssh -q -t $user@$rmt_server sudo userdel -fr $rmt_user
+		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
 		echo $?
 	done
 fi
