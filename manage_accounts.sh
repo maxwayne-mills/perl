@@ -1,20 +1,18 @@
-#!/bin/bash
+#!/bin/bash -x
 # Created July 5 2016
 # Author: Clarence Mills
 # Depeendency: PKI key in place on each remote-server to provide secure passwordless connection
 # Sudo files in place to allow usage of User account managment
  
- 
-RMT_CONNECT_USER=cmills
-RMT_SERVER=$1
-FUNCTION=$2
-USER=$3
-CONNECT=$RMT_CONNECT_USER@$RMT_SERVER
+FUNCTION=$1
+USER=$2
+RMT_SERVER=$3
+CONNECT=$RMT_SERVER
  
 show-hostname()
 {
 echo "Checking host name ...."
-echo "Connected to (issued hostname command):" `ssh $CONNECT hostname`
+echo "Connected to:" `ssh $CONNECT hostname`
 echo ""
 }
  
@@ -25,9 +23,14 @@ echo
  
 search-user()
 {
+echo -n "Enter hostname: "
+read host
+RMT_SERVER=$host
+CONNECT=$RMT_SERVER
+
 if [ -z $USER ];then
         # Prompt for username if not provided
-        echo "Enter the uername you would like to search for"
+        echo -n "Enter the uername you would like to search for: "
         read account
         USER=$account
         echo "Searching for user:$USER on Server:$RMT_SERVER"
@@ -73,40 +76,77 @@ read groupid
  
 echo -n "Enter home directory: "
 read location
- 
-#echo -n "Home location:"
-#read location
 
+echo -n "Enter hostname: "
+read host
+RMT_SERVER=$host
+CONNECT=$RMT_SERVER
+ 
 # Create hashed password
 pass=`openssl passwd -crypt Temp1234`
  
-# add user using useradd and fields entered from above
-set -x
+# add user using /etc/group
+#set -x
+
+echo "Adding user:$user to /etc/group"
 ssh -tt $CONNECT sudo groupadd $user -f -g $groupid
 echo $?
-
+ 
+# add user to /etc/passwd
+echo "Creating $user acount on $RMT_SERVER"
 ssh -tt $CONNECT sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $user
 echo $?
-
-#ssh -tt $CONNECT sudo usermod -m -d $location $user
-#echo $?
+ 
+# Expire password forcing the user to set password on first-login
+ssh -tt $CONNECT sudo chage -d 0 $user
+echo $?
+ 
+#Update GECOS files
+ssh -tt $CONNECT sudo chfn -f "$comment"
+echo $?
 }
  
 delete-user()
 {
+echo -n "Enter hostname: "
+read host
+RMT_SERVER=$host
+CONNECT=$RMT_SERVER
+
 if [ -z $USER ];then
-        echo -n "Enter username"
+        echo -n "Enter username: "
         read username
         USER=$username
-        echo "Deleting user:$USER on Server:$RMT_SERVER"
+        echo "Deleting user: $USER on Server: $RMT_SERVER"
         ssh -tt $CONNECT sudo userdel -fr $USER
 else
-        echo -n "Deleting user:$USER on Server:$RMT_SERVER"
+        echo -n "Deleting user: $USER on Server: $RMT_SERVER"
         ssh -tt $CONNECT sudo userdel -r $USER
 fi
 }
  
-case $2 in
+listpass()
+{
+echo -n "Enter hostname: "
+read host
+RMT_SERVER=$host
+CONNECT=$RMT_SERVER
+
+ssh $CONNECT cat /etc/passwd
+}
+ 
+check-connection()
+{
+echo -n "Enter hostname: "
+read host
+RMT_SERVER=$host
+CONNECT=$RMT_SERVER
+
+ 
+  ssh -vvvv $CONNECT ls -la
+}
+ 
+case $1 in
 add-user)
         clear
         add-user
@@ -123,8 +163,33 @@ search-user)
         show-hostname
         search-user
         ;;
+listpass)
+        listpass
+        ;;
+checknet)
+        check-connection
+        ;;
+hosts)
+#set -x
+
+	Function=$2
+	echo "enter file"
+	read File
+	for line in $(cat $File); do
+		echo "$line"
+		RMT_SERVER=$line
+		CONNECT=$RMT_SERVER
+		$Function
+	done
+        ;;
 *)
-        echo `basename $0` "options: <servername or IP> | add-user | delete-user | search-user | username"
-        echo `basename $0` "tor-lx-svn-d01 search-user cmills "
+        echo `basename $0` "options: search-user | add-user | delete-user | listpass | username <servername or IP>"
+        echo "Options:"
+        echo `basename $0` "search-user cmills tor-lx-svn-d01  	- Search remote server for username within /etc/passwd and /etc/group"
+        echo `basename $0` "add-user            		- Add users to the system"
+        echo `basename $0` "delete-user cmills tor-lx-svn-d01   - Delete users from remote server - home, mail and users will be removed from the system"
+        echo `basename $0` "listpass             		- List remote servers /etc/passwd file"
+        echo `basename $0` "checknet             		- Check connecting to a server"
+	echo `basename $0` "hosts				- connect to multiple servers passed from a file from the command line"
         ;;
 esac
