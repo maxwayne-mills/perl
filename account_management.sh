@@ -22,13 +22,13 @@ usage(){
 	echo ""
         echo -e "  -d | delete-user username \t Delete users from the system"
 	echo -e "  -h | help \t\t\t Display this help message"
-	echo -e "  -m | maintenance \t\t Administration of user account"
+	echo -e "  -m | menu \t\t Administration of user account"
 	echo -e "	\t\t\t Reset passwords"
 	echo -e "	\t\t\t Lock Account"
 	echo -e "	\t\t\t Unlock Account"
 	echo -e "	\t\t\t PamTally2 reset"
 	echo -e "	\t\t\t Add account to additional Groups"
-	echo -e "	\t\t\t Change primary group"
+	echo -e "	\t\t\t Change group ID"
 	echo ""
         echo -e "  -s | search username \t\t Search /etc/passwd and /etc/group for username"
 	echo ""
@@ -45,7 +45,7 @@ usage(){
 	echo -e "  $scriptname check jdoe"
 	echo -e "  $scriptname -c jdoe"
 	echo ""
-	echo -e "  $scriptname maintenance"
+	echo -e "  $scriptname menu"
 	echo -e "  $scriptname -m"
 	echo ""
 	echo -e "Note:"
@@ -94,37 +94,51 @@ if [ -z $file ];then
 	read file
 	echo ""
 	for line in $(cat $file); do
-		echo "Connected to $line"
 		rmt_server=$line
 		echo ""
-		# Searching /etc/passwd file 
-		echo "Searching passwd file"
+
+		# Search /etc/passwd file 
+		echo "Searching passwd file on $rmt_server"
         	ssh -q $user@$rmt_server grep $rmt_user /etc/passwd
+		if [ $? != 0 ];then
+			echo "$rmt_user not found"
+		fi
 		echo ""
+
 		# Searching /etc/group file 
-		echo "Searching group file"
+		echo "Searching group file on $rmt_server"
        		ssh -q $user@$rmt_server grep $rmt_user /etc/group
+		if [ $? != 0 ];then
+			echo "$rmt_user not found" 
+		fi
 		echo ""
 	done
 else
 	for line in $(cat $file); do
-		echo "Connected to $line"
 		rmt_server=$line
 		echo ""
+
 		# Searching /etc/passwd file 
-		echo "Searching passwd file"
+		echo "Searching passwd file on $rmt_server"
         	ssh -q $user@$rmt_server grep $rmt_user /etc/passwd
+		if [ $? != 0 ];then
+			echo "$rmt_user not found"
+		fi
 		echo ""
+
 		# Searching /etc/group file 
-		echo "Searching group file"
+		echo "Searching group file on $rmt_server"
        		ssh -q $user@$rmt_server grep $rmt_user /etc/group
+		if [ $? != 0 ];then
+			echo "$rmt_user not found"
+		fi
 		echo ""
 	done
 fi
 }
 
 add-user(){
-#set -xv
+set -xv
 
 # Create hashed password
 pass=`openssl passwd -crypt Temp1234`
@@ -135,7 +149,7 @@ echo -n "Enter username: "
 read username
 
 echo -n "Enter Comment: "
-read comment
+read "comment"
 
 echo -n "Enter UID: "
 read uuid
@@ -153,24 +167,33 @@ if [ -z $file ];then
 	for line in $(cat $file); do
 		echo "$line"
 		rmt_server=$line
+
+		# Adding user to /etc/group
 		echo ""
 		echo "Adding user:$username to /etc/group"
 		ssh -q -t $user@$rmt_server sudo groupadd $username -g $groupid
 		echo ""
+		
+		# Create User	
 		echo "Creating $username on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
 		echo $?
-		ssh -q -t $user@$rmt_server sudo chfn -f "$comment" $username
+
+		# Insert comment of first name
+		ssh -q -t $user@$rmt_server sudo chfn -o $comment $username
 		echo $?
+
+		# Expire password, requires user to reset on first login
 		ssh -q -t $user@$rmt_server sudo chage -d 0 $username
 		echo $?
+
 		# Set account expiration date 
-		ssh -q -t $user@$rmt_server sudo chage -m 90 -M 90 $username
+		#ssh -q -t $user@$rmt_server sudo chage -m 90 -M 90 $username
 
 		# Specify inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
 
-		# Sety warning days before password expires
+		# Set warning days before password expires
 		ssh -q -t $user@rmt_server sudo chage -W 7 $username
 		echo $?
 	done
@@ -182,20 +205,26 @@ else
 		echo "Adding user:$username to /etc/group"
 		ssh -q -t $user@$rmt_server sudo groupadd $username -g $groupid
 		echo ""
+
 		echo "Creating $username on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
 		echo $?
-		ssh -q -t $user@$rmt_server sudo chfn -f "$comment" $username
+
+		# Insert comment of user first name
+		ssh -q -t $user@$rmt_server sudo chfn -o $comment $username
 		echo $?
+
+		# Expire password requiring user to reset on first login
 		ssh -q -t $user@$rmt_server sudo chage -d 0 $username
 		echo $?
+
 		# Set account expiration date 
-		ssh -q -t $user@$rmt_server sudo chage -E $today -m 90 -M 90 $username
+		#ssh -q -t $user@$rmt_server sudo chage -E $today -m 90 -M 90 $username
 
 		# Specify inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
 
-		# Sety warning days before password expires
+		# Set warning days before password expires
 		ssh -q -t $user@rmt_server sudo chage -W 7 $username
 		echo $?
 	done
@@ -204,7 +233,12 @@ fi
 
 delete-user(){
 #set -xv
-rmt_user=$1
+
+if [ -z $rmt_user ];then
+	echo -n "Enter username: "
+	read rmt_user
+	echo $rmt_user
+fi
 
 if [ -z $file ];then
 	echo "Enter file containning list of servers"
@@ -213,8 +247,9 @@ if [ -z $file ];then
 		echo "$line"
 		rmt_server=$line
 		echo ""
-		echo "Deleting user: $rmt_user on $rmt_server"
+		echo "Deleting user and group: $rmt_user on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
+		ssh -q -t $user@$rmt_server sudo groupdel $rmt_user
 		echo $?
 	done
 else
@@ -222,8 +257,9 @@ else
 		echo "$line"
 		rmt_server=$line
 		echo ""
-		echo "Deleting user: $rmt_usere on $rmt_server"	
+		echo "Deleting user and grou: $rmt_usere on $rmt_server"	
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
+		ssh -q -t $user@$rmt_server sudo groupdel $rmt_user
 		echo $?
 	done
 fi
@@ -399,7 +435,7 @@ changeprimarygroup(){
 echo -n "Enter user name: "
 read username
 
-echo -n "Enter group name: "
+echo -n "Enter group name or GUID: "
 read group
 
 echo -n "Enter file: "
@@ -421,7 +457,7 @@ for line in $(cat $file); do
 done
 }
 
-maintenance(){
+menu(){
 
 menu(){
 
@@ -431,43 +467,56 @@ menu(){
         echo -e "\t\t\t    Account Administration  "
         echo -e "\t\t\t ---------------------------"
 	echo -e ""
-        echo -e "\t\t\t 1. Reset password"
-        echo -e "\t\t\t 2. Lock Account  "
-        echo -e "\t\t\t 3. Unlock Account"
-        echo -e "\t\t\t 4. Pam Tally2 reset"
-        echo -e "\t\t\t 5. Add user to group"
-        echo -e "\t\t\t 6. Change Primary Group"
-        echo -e "\t\t\t 7. Check account status"
-        echo -e "\t\t\t 8. Exit"
+        echo -e "\t\t\t 1. Add User"
+        echo -e "\t\t\t 2. Delete User"
+        echo -e "\t\t\t 3. Reset password"
+        echo -e "\t\t\t 4. Lock Account  "
+        echo -e "\t\t\t 5. Unlock Account"
+        echo -e "\t\t\t 6. Pam Tally2 reset"
+        echo -e "\t\t\t 7. Add user to group"
+        echo -e "\t\t\t 8. Change Group ID"
+        echo -e "\t\t\t 9. Search"
+        echo -e "\t\t\t 10. Check account status"
+        echo -e "\t\t\t 11. Exit"
 	echo -e ""
 }
 
 	menu
-	echo -en "\t\t\t Enter selection from 1-8: "
+	echo -en "\t\t\t Enter selection from 1-11: "
 	read choice
 	case $choice in
 	1)
-		reset-pass
+		add-user
 		;;
 	2)
-		lock-account
+                delete-user
 		;;
 	3)
-		unlock-account
+		reset-pass
 		;;
 	4)
-		pamtally2
+		lock-account
 		;;
 	5)
-		addtogroup
+		unlock-account
 		;;
 	6)
-		changeprimarygroup
+		pamtally2
 		;;
 	7)
-		check 
+		addtogroup
 		;;
 	8)
+		changeprimarygroup
+		;;
+	9)
+		check_username $rmt_user
+		search $rmt_user $rmt_server
+		;;
+	10)
+		check 
+		;;
+	11)
 		exit 0
 		;;
 	*)	
@@ -505,12 +554,10 @@ check|-c)
 	else
        		 continue
 	fi
-
-	
 	check $rmt_user
 	;;
-maintenance|-m)
- 	maintenance
+menu|-m)
+ 	menu
 	;;	
 -h|help|*)
         usage
