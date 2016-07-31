@@ -5,6 +5,7 @@
 # Sudo files in place to allow usage of User account managment applications
  
 user=root
+today=`date +%Y-%m-%d`
  
 usage(){
 	scriptname=`basename $0`
@@ -55,10 +56,9 @@ usage(){
 check_username(){
 #set -x
 rmt_user=$1
-clear
  
 if [ -z $rmt_user ];then
-        echo -n "Enter username you would like to search for on $rmt_server: "
+        echo -ne "\t\t\t Enter username you would like to search for on $rmt_server: "
         read rmt_user
         echo $rmt_user
 else
@@ -69,10 +69,9 @@ fi
 check_servername(){
 #set -x
 rmt_server=$1
-clear
  
 if [ -z $rmt_server ];then
-        echo "Enter servername: "
+        echo -ne "\t\t\t Enter servername: "
         read server
         rmt_server=$server
         echo $rmt_server
@@ -90,7 +89,7 @@ rmt_server=$2
 clear
 
 if [ -z $file ];then
-	echo "Enter name of the file containing the list of servers"
+	echo -ne "\t\t\t Enter name of the file containing the list of servers "
 	read file
 	echo ""
 	for line in $(cat $file); do
@@ -138,31 +137,29 @@ fi
 }
 
 add-user(){
-set -xv
+#set -xv
 
 # Create hashed password
 pass=`openssl passwd -crypt Temp1234`
-today=`date +%Y-%m-%d`
-clear
 
-echo -n "Enter username: "
+echo -ne "\t\t\t Enter username: "
 read username
 
-echo -n "Enter Comment: "
+echo -ne "\t\t\t Enter Comment: "
 read "comment"
 
-echo -n "Enter UID: "
+echo -ne "\t\t\t Enter UID: "
 read uuid
 
-echo -n "Enter GID: "
+echo -ne "\t\t\t Enter GID: "
 read groupid
 
-echo -n "Enter home directory: "
+echo -ne "\t\t\t Enter home directory: "
 read location
 
 file=$2
 if [ -z $file ];then
-	echo  "enter file"
+	echo -ne  "\t\t\t Enter file"
 	read file
 	for line in $(cat $file); do
 		echo "$line"
@@ -192,6 +189,7 @@ if [ -z $file ];then
 
 		# Specify inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
+		echo $?
 
 		# Set warning days before password expires
 		ssh -q -t $user@rmt_server sudo chage -W 7 $username
@@ -223,6 +221,7 @@ else
 
 		# Specify inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
+		echo $?
 
 		# Set warning days before password expires
 		ssh -q -t $user@rmt_server sudo chage -W 7 $username
@@ -235,13 +234,13 @@ delete-user(){
 #set -xv
 
 if [ -z $rmt_user ];then
-	echo -n "Enter username: "
+	echo -ne "\t\t\t Enter username: "
 	read rmt_user
 	echo $rmt_user
 fi
 
 if [ -z $file ];then
-	echo "Enter file containning list of servers"
+	echo -ne "\t\t\t Enter file containing list of servers"
 	read file
 	for line in $(cat $file); do
 		echo "$line"
@@ -270,12 +269,12 @@ check(){
 rmt_user=$1
 
 if [ -z $rmt_user ];then
-	echo -n "Enter username: "
+	echo -ne "\t\t\t Enter username: "
 	read rmt_user
 fi
 
 if [ -z $file ]; then
-	echo -n "Enter file containing list of servers: "
+	echo -ne "\t\t\t Enter file containing list of servers: "
 	read file
 	for line in $(cat $file); do
 		rmt_server=$line
@@ -317,10 +316,10 @@ reset-pass(){
 # Create hashed password
 pass=`openssl passwd -crypt Temp1234`
 
-echo -n "Enter username: "
+echo -ne "\t\t\t Enter username: "
 read username
 
-echo -n "Enter file: "
+echo -ne "\t\t\t Enter file: "
 read file
 
 for line in $(cat $file); do
@@ -339,10 +338,10 @@ done
 }
 
 lock-account(){
-echo -n "Enter username: "
+echo -ne "\t\t\t Enter username: "
 read username
 
-echo -n "Enter file: "
+echo -ne "\t\t\t Enter file: "
 read file
 
 for line in $(cat $file); do
@@ -361,10 +360,10 @@ done
 }
 
 unlock-account(){
-echo -n "Enter username: "
+echo -ne "\t\t\t Enter username: "
 read username
 
-echo -n "Enter file: "
+echo -ne "\t\t\t Enter file: "
 read file
 
 for line in $(cat $file); do
@@ -383,10 +382,10 @@ done
 }
 
 pamtally2(){
-echo -n "Enter username: "
+echo -ne "\t\t\t Enter username: "
 read username
 
-echo -n "Enter file: "
+echo -ne "\t\t\t Enter file: "
 read file
 
 for line in $(cat $file); do
@@ -405,14 +404,14 @@ done
 }
 
 addtogroup(){
-echo -n "Enter user name: "
+echo -ne "\t\t\t Enter user name: "
 read username
 
-echo -n "Seperate multiple groups by comma's"
-echo -n "Enter group name: "
+echo -ne "\t\t\t Seperate multiple groups by comma's"
+echo -ne "\t\t\t Enter group name: "
 read group
 
-echo -n "Enter file: "
+echo -ne "\t\t\t Enter file: "
 read file
 
 for line in $(cat $file); do
@@ -432,13 +431,13 @@ fi
 }
 
 changeprimarygroup(){
-echo -n "Enter user name: "
+echo -ne "\t\t\t Enter user name: "
 read username
 
-echo -n "Enter group name or GUID: "
+echo -ne "\t\t\tEnter group name or GUID: "
 read group
 
-echo -n "Enter file: "
+echo -ne "\t\t\t Enter file: "
 read file
 
 for line in $(cat $file); do
