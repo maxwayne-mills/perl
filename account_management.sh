@@ -6,6 +6,7 @@
  
 user=root
 today=`date +%Y-%m-%d`
+log=logfile-$today.txt
  
 usage(){
 	scriptname=`basename $0`
@@ -176,26 +177,26 @@ if [ -z $file ];then
 		echo "Creating $username on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username -s /bin/bash
 		userresult=$?
-		echo $rmt_server add-user $username,$uuid,$groupid,$location $userresult >> logfile-$today.txt
 
 		# Insert comment of first name
 		ssh -q -t $user@$rmt_server sudo chfn -o $comment $username
-		echo $?
+		commentresults=$?
 
 		# Expire password, requires user to reset on first login
 		ssh -q -t $user@$rmt_server sudo chage -d 0 $username
-		echo $?
+		passwordresult=$?
 
 		# Set account expiration date 
 		ssh -q -t $user@$rmt_server sudo chage -m 90 -M 90 $username
 
-		# Specify 7 day befor account is inactive days after password expires
+		# Specify 7 day before account is inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
-		echo $?
 
 		# Set warning days before password expires
 		ssh -q -t $user@rmt_server sudo chage -W 7 $username
-		echo $?
+
+		# log options
+		echo $rmt_server add-user $username,$uuid,$location $userresult - $groupid $groupresult - password-set $passwordresult >> $log
 	done
 else
 	for line in $(cat $file); 
@@ -205,31 +206,33 @@ else
 		echo ""
 		echo "Adding user:$username to /etc/group"
 		ssh -q -t $user@$rmt_server sudo groupadd $username -g $groupid
+		groupresult=$?
 		echo ""
 
 		echo "Creating $username on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
 		userresult=$?
-		echo $rmt_server add-user $username,$uuid,$groupid,$location $userresult >> logfile-$today.txt
 
 		# Insert comment of user first name
 		ssh -q -t $user@$rmt_server sudo chfn -o $comment $username
-		echo $?
+		commentresults=$?
 
 		# Expire password requiring user to reset on first login
 		ssh -q -t $user@$rmt_server sudo chage -d 0 $username
-		echo $?
+		passwordresults=$?
 
 		# Set account expiration date 
 		ssh -q -t $user@$rmt_server sudo chage -E $today -m 90 -M 90 $username
 
 		# Specify inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
-		echo $?
 
 		# Set warning days before password expires
 		ssh -q -t $user@rmt_server sudo chage -W 7 $username
 		echo $?
+
+		# log options
+		echo $rmt_server add-user $username,$uuid,$location $userresult - $groupid $groupresult - password-set $passwordresults >> $log
 	done
 fi
 }
@@ -256,10 +259,9 @@ if [ -z $file ];then
 
 		echo "Deleting user and group: $rmt_user on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
-		echo $rmt_server delete-user $rmt_user $?
 
-		ssh -q -t $user@$rmt_server sudo groupdel $rmt_user
-		echo $?
+		# Send output to log file
+		echo $rmt_server delete-user $rmt_user $? >> $log
 	done
 else
 	for line in $(cat $file); 
@@ -267,11 +269,11 @@ else
 		echo "$line"
 		rmt_server=$line
 		echo ""
-		echo "Deleting user and grou: $rmt_usere on $rmt_server"	
+		echo "Deleting user and group: $rmt_usere on $rmt_server"	
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
-		echo $?
-		ssh -q -t $user@$rmt_server sudo groupdel $rmt_user
-		echo $?
+
+		# Send output to log file
+		echo $rmt_server delete-user $rmt_user $?
 	done
 fi
 
