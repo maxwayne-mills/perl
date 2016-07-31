@@ -58,9 +58,8 @@ check_username(){
 rmt_user=$1
  
 if [ -z $rmt_user ];then
-        echo -ne "\t\t\t Enter username you would like to search for on $rmt_server: "
+        echo -ne "\t\t\t Enter the username to search for. "
         read rmt_user
-        echo $rmt_user
 else
         echo $rmt_user
 fi
@@ -71,9 +70,8 @@ check_servername(){
 rmt_server=$1
  
 if [ -z $rmt_server ];then
-        echo -ne "\t\t\t Enter servername: "
-        read server
-        rmt_server=$server
+        echo -ne "\t\t\t Enter servername. "
+        read rmt_server
         echo $rmt_server
 else
         echo $rmt_server
@@ -86,26 +84,24 @@ search(){
 
 rmt_user=$1
 rmt_server=$2
-clear
 
 if [ -z $file ];then
-	echo -ne "\t\t\t Enter name of the file containing the list of servers "
+	echo -ne "\t\t\t Enter filename containing the list of servers. "
 	read file
 	echo ""
 	for line in $(cat $file); do
 		rmt_server=$line
-		echo ""
+		echo $rmt_server
 
 		# Search /etc/passwd file 
-		echo "Searching passwd file on $rmt_server"
+		echo -n "/etc/passwd file "
         	ssh -q $user@$rmt_server grep $rmt_user /etc/passwd
 		if [ $? != 0 ];then
 			echo "$rmt_user not found"
 		fi
-		echo ""
 
 		# Searching /etc/group file 
-		echo "Searching group file on $rmt_server"
+		echo -n "/etc/group "
        		ssh -q $user@$rmt_server grep $rmt_user /etc/group
 		if [ $? != 0 ];then
 			echo "$rmt_user not found" 
@@ -138,9 +134,12 @@ fi
 
 add-user(){
 #set -xv
-
 # Create hashed password
 pass=`openssl passwd -crypt Temp1234`
+
+echo ""
+echo -e "\t\t\t Add user option"
+echo ""
 
 echo -ne "\t\t\t Enter username: "
 read username
@@ -159,9 +158,10 @@ read location
 
 file=$2
 if [ -z $file ];then
-	echo -ne  "\t\t\t Enter file"
+	echo -ne  "\t\t\t Enter file. "
 	read file
-	for line in $(cat $file); do
+	for line in $(cat $file); 
+	do
 		echo "$line"
 		rmt_server=$line
 
@@ -169,12 +169,14 @@ if [ -z $file ];then
 		echo ""
 		echo "Adding user:$username to /etc/group"
 		ssh -q -t $user@$rmt_server sudo groupadd $username -g $groupid
+		groupresult=$?
 		echo ""
 		
 		# Create User	
 		echo "Creating $username on $rmt_server"
-		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
-		echo $?
+		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username -s /bin/bash
+		userresult=$?
+		echo $rmt_server add-user $username,$uuid,$groupid,$location $userresult >> logfile-$today.txt
 
 		# Insert comment of first name
 		ssh -q -t $user@$rmt_server sudo chfn -o $comment $username
@@ -185,9 +187,9 @@ if [ -z $file ];then
 		echo $?
 
 		# Set account expiration date 
-		#ssh -q -t $user@$rmt_server sudo chage -m 90 -M 90 $username
+		ssh -q -t $user@$rmt_server sudo chage -m 90 -M 90 $username
 
-		# Specify inactive days after password expires
+		# Specify 7 day befor account is inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
 		echo $?
 
@@ -196,7 +198,8 @@ if [ -z $file ];then
 		echo $?
 	done
 else
-	for line in $(cat $file); do
+	for line in $(cat $file); 
+	do
 		echo "Connected to $line"
 		rmt_server=$line
 		echo ""
@@ -206,7 +209,8 @@ else
 
 		echo "Creating $username on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username
-		echo $?
+		userresult=$?
+		echo $rmt_server add-user $username,$uuid,$groupid,$location $userresult >> logfile-$today.txt
 
 		# Insert comment of user first name
 		ssh -q -t $user@$rmt_server sudo chfn -o $comment $username
@@ -217,7 +221,7 @@ else
 		echo $?
 
 		# Set account expiration date 
-		#ssh -q -t $user@$rmt_server sudo chage -E $today -m 90 -M 90 $username
+		ssh -q -t $user@$rmt_server sudo chage -E $today -m 90 -M 90 $username
 
 		# Specify inactive days after password expires
 		ssh -q -t $user@$rmt_server sudo chage -I 3 $username
@@ -233,31 +237,39 @@ fi
 delete-user(){
 #set -xv
 
+echo ""
+echo -e "\t\t\t Delete user option"
+echo ""
+
 if [ -z $rmt_user ];then
-	echo -ne "\t\t\t Enter username: "
+	echo -ne "\t\t\t Enter username. "
 	read rmt_user
-	echo $rmt_user
 fi
 
 if [ -z $file ];then
-	echo -ne "\t\t\t Enter file containing list of servers"
+	echo -ne "\t\t\t Enter file containing list of servers. "
 	read file
-	for line in $(cat $file); do
+	for line in $(cat $file); 
+	do
 		echo "$line"
 		rmt_server=$line
-		echo ""
+
 		echo "Deleting user and group: $rmt_user on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
+		echo $rmt_server delete-user $rmt_user $?
+
 		ssh -q -t $user@$rmt_server sudo groupdel $rmt_user
 		echo $?
 	done
 else
-	for line in $(cat $file); do
+	for line in $(cat $file); 
+	do
 		echo "$line"
 		rmt_server=$line
 		echo ""
 		echo "Deleting user and grou: $rmt_usere on $rmt_server"	
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
+		echo $?
 		ssh -q -t $user@$rmt_server sudo groupdel $rmt_user
 		echo $?
 	done
@@ -269,12 +281,12 @@ check(){
 rmt_user=$1
 
 if [ -z $rmt_user ];then
-	echo -ne "\t\t\t Enter username: "
+	echo -ne "\t\t\t Enter username. "
 	read rmt_user
 fi
 
 if [ -z $file ]; then
-	echo -ne "\t\t\t Enter file containing list of servers: "
+	echo -ne "\t\t\t Enter file containing list of servers. "
 	read file
 	for line in $(cat $file); do
 		rmt_server=$line
@@ -316,6 +328,7 @@ reset-pass(){
 # Create hashed password
 pass=`openssl passwd -crypt Temp1234`
 
+echo -ne "\t\t\t Reset password option"
 echo -ne "\t\t\t Enter username: "
 read username
 
@@ -341,7 +354,7 @@ lock-account(){
 echo -ne "\t\t\t Enter username: "
 read username
 
-echo -ne "\t\t\t Enter file: "
+echo -ne "\t\t\t Enter file. "
 read file
 
 for line in $(cat $file); do
@@ -462,9 +475,9 @@ menu(){
 
 	clear
 	echo -e ""
-        echo -e "\t\t\t ---------------------------"
-        echo -e "\t\t\t    Account Administration  "
-        echo -e "\t\t\t ---------------------------"
+        echo -e "\t\t\t --------------------------------"
+        echo -e "\t\t\t    User Account Administration  "
+        echo -e "\t\t\t --------------------------------"
 	echo -e ""
         echo -e "\t\t\t 1. Add User"
         echo -e "\t\t\t 2. Delete User"
