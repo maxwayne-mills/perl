@@ -338,7 +338,8 @@ reset-pass(){
 # Create hashed password
 pass=`openssl passwd -crypt Temp1234`
 
-echo -ne "\t\t\t Reset password option"
+echo ""
+echo -e "\t\t\t Reset password option"
 echo -ne "\t\t\t Enter username: "
 read username
 
@@ -357,8 +358,10 @@ for line in $(cat $file); do
 
 	if [ $result == 0 ]; then
 		echo "Password reset to default for $username"
+		echo $rmt_server reset-pass $username $result >> $Log
 	else
 		echo "Password reset not completed for $username."
+		echo $rmt_server reset-pass $username $result >> $Log
 	fi
 done
 }
@@ -382,8 +385,10 @@ for line in $(cat $file); do
 
 	if [ $result == 0 ]; then
         	echo "$username account is locked"
+		echo $rmt_server account-lock $username $result >> $log
 	else
         	echo "Could not lock account for $username"
+		echo $rmt_server account-lock $username $result >> $log
 	fi
 done
 }
@@ -407,8 +412,10 @@ for line in $(cat $file); do
 
 	if [ $result == 0 ]; then
        		echo "User:$username account is unlocked"
+		echo $rmt_server unlock-account $username $result >> $log
 	else
         	echo "Could not unlock account"
+		echo $rmt_server unlock-account $username $result >> $log
 	fi
 done
 }
@@ -432,8 +439,10 @@ for line in $(cat $file); do
 
 	if [ $result == 0 ]; then
         	echo "$username account reset"
+		echo $rmt_server pammtall-reset $username $result >> $log
 	else
         	echo "Could not reeset account"
+		echo $rmt_server pammtall-reset $username $result >> $log
 	fi
 done
 }
@@ -496,14 +505,14 @@ for line in $(cat $file); do
 		echo ""
         	echo "$username changed primary group to $group"
         	ssh -q -t $user@$rmt_server sudo id $username
-		primarygroupchangeresults=$?
+		# Send results to log file
+		echo $rmt_server changeprimarygroup $username $group $results >> $log
 	else
         	echo "Could not change to $group"
 		primarygroupchangeresults=$?
+		# Send results to log file
+		echo $rmt_server changeprimarygroup $username $group $results >> $log
 	fi
-
-# Send results to log file
-echo $rmt_server changeprimarygroup $username $group $primarygroupchangeresults >> $log
 done
 }
 
