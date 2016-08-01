@@ -163,11 +163,10 @@ if [ -z $file ];then
 	read file
 	for line in $(cat $file); 
 	do
-		echo "$line"
 		rmt_server=$line
+		echo $rmt_server
 
 		# Adding user to /etc/group
-		echo ""
 		echo "Adding user:$username to /etc/group"
 		ssh -q -t $user@$rmt_server sudo groupadd $username -g $groupid
 		groupresult=$?
@@ -449,7 +448,7 @@ changeprimarygroup(){
 echo -ne "\t\t\t Enter user name: "
 read username
 
-echo -ne "\t\t\tEnter group name or GUID: "
+echo -ne "\t\t\t Enter group new name or GUID: "
 read group
 
 echo -ne "\t\t\t Enter file: "
@@ -459,15 +458,20 @@ for line in $(cat $file); do
         rmt_server=$line
 	echo ""
         echo "Change primary group for $username to $group on $rmt_server"
-        ssh -q -t $user@$rmt_server sudo usermod -g $group $username
+        ssh -q -t $user@$rmt_server sudo groupmod -g $group $username
         result="$?"
 	if [ $result == 0 ]; then
 		echo ""
         	echo "$username changed primary group to $group"
         	ssh -q -t $user@$rmt_server sudo id $username
+		primarygroupchangeresults=$?
 	else
         	echo "Could not change to $group"
+		primarygroupchangeresults=$?
 	fi
+
+# Send results to log file
+echo $rmt_server changeprimarygroup $username $group $primarygroupchangeresults >> $log
 done
 }
 
@@ -481,15 +485,15 @@ menu(){
         echo -e "\t\t\t    User Account Administration  "
         echo -e "\t\t\t --------------------------------"
 	echo -e ""
-        echo -e "\t\t\t 1. Add User"
-        echo -e "\t\t\t 2. Delete User"
-        echo -e "\t\t\t 3. Reset password"
-        echo -e "\t\t\t 4. Lock Account  "
-        echo -e "\t\t\t 5. Unlock Account"
-        echo -e "\t\t\t 6. Pam Tally2 reset"
-        echo -e "\t\t\t 7. Add user to group"
-        echo -e "\t\t\t 8. Change Group ID"
-        echo -e "\t\t\t 9. Search"
+        echo -e "\t\t\t 1. Search User"
+        echo -e "\t\t\t 2. Add User"
+        echo -e "\t\t\t 3. Delete User"
+        echo -e "\t\t\t 4. Reset password"
+        echo -e "\t\t\t 5. Lock Account  "
+        echo -e "\t\t\t 6. Unlock Account"
+        echo -e "\t\t\t 7. Pam Tally2 reset"
+        echo -e "\t\t\t 8. Add user to group"
+        echo -e "\t\t\t 9. Change Group ID"
         echo -e "\t\t\t 10. Check account status"
         echo -e "\t\t\t 11. Exit"
 	echo -e ""
@@ -500,32 +504,32 @@ menu(){
 	read choice
 	case $choice in
 	1)
-		add-user
-		;;
-	2)
-                delete-user
-		;;
-	3)
-		reset-pass
-		;;
-	4)
-		lock-account
-		;;
-	5)
-		unlock-account
-		;;
-	6)
-		pamtally2
-		;;
-	7)
-		addtogroup
-		;;
-	8)
-		changeprimarygroup
-		;;
-	9)
 		check_username $rmt_user
 		search $rmt_user $rmt_server
+		;;
+	2)
+		add-user
+		;;
+	3)
+                delete-user
+		;;
+	4)
+		reset-pass
+		;;
+	5)
+		lock-account
+		;;
+	6)
+		unlock-account
+		;;
+	7)
+		pamtally2
+		;;
+	8)
+		addtogroup
+		;;
+	9)
+		changeprimarygroup
 		;;
 	10)
 		check 
