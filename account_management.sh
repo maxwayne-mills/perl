@@ -252,10 +252,11 @@ if [ -z $file ];then
 	read file
 	for line in $(cat $file); 
 	do
-		echo "$line"
 		rmt_server=$line
+		echo ""
+		echo -e "\t\t\t\t\t ===== $rmt_server ====="
 
-		echo "Deleting user and group: $rmt_user on $rmt_server"
+		echo "Deleting user and group for $rmt_user"
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
 		result=$?
 
@@ -265,15 +266,16 @@ if [ -z $file ];then
 else
 	for line in $(cat $file); 
 	do
-		echo "$line"
 		rmt_server=$line
 		echo ""
+		echo -e "\t\t\t\t\t ===== $rmt_server ====="
+
 		echo "Deleting user and group: $rmt_usere on $rmt_server"	
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
 		result=$?
 
 		# Send output to log file
-		echo $rmt_server delete-user $rmt_user $result
+		echo $rmt_server delete-user $rmt_user $result >> $log
 	done
 fi
 
