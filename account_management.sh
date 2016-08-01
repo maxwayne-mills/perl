@@ -358,10 +358,10 @@ for line in $(cat $file); do
 
 	if [ $result == 0 ]; then
 		echo "Password reset to default for $username"
-		echo $rmt_server reset-pass $username $result >> $Log
+		echo $rmt_server password-reset $username $result >> $log
 	else
 		echo "Password reset not completed for $username."
-		echo $rmt_server reset-pass $username $result >> $Log
+		echo $rmt_server password-reset $username $result >> $log
 	fi
 done
 }
