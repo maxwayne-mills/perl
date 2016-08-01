@@ -170,10 +170,9 @@ if [ -z $file ];then
 		echo "Adding user:$username to /etc/group"
 		ssh -q -t $user@$rmt_server sudo groupadd $username -g $groupid
 		groupresult=$?
-		echo ""
 		
 		# Create User	
-		echo "Creating $username on $rmt_server"
+		echo "Adding user:$username to /etc/passwd"
 		ssh -q -t $user@$rmt_server sudo useradd -u $uuid -g $groupid -m -d $location -p $pass $username -s /bin/bash
 		userresult=$?
 
@@ -195,7 +194,7 @@ if [ -z $file ];then
 		ssh -q -t $user@rmt_server sudo chage -W 7 $username
 
 		# log options
-		echo $rmt_server add-user $username,$uuid,$location $userresult - $groupid $groupresult - password-set $passwordresult >> $log
+		echo $rmt_server add-user $username,$uuid,$location $userresult - group $groupid,$groupresult - password-set,$passwordresult >> $log
 	done
 else
 	for line in $(cat $file); 
@@ -258,9 +257,10 @@ if [ -z $file ];then
 
 		echo "Deleting user and group: $rmt_user on $rmt_server"
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
+		result=$?
 
 		# Send output to log file
-		echo $rmt_server delete-user $rmt_user $? >> $log
+		echo $rmt_server delete-user $rmt_user $result >> $log
 	done
 else
 	for line in $(cat $file); 
@@ -270,9 +270,10 @@ else
 		echo ""
 		echo "Deleting user and group: $rmt_usere on $rmt_server"	
 		ssh -q -t $user@$rmt_server sudo userdel -f -r $rmt_user
+		result=$?
 
 		# Send output to log file
-		echo $rmt_server delete-user $rmt_user $?
+		echo $rmt_server delete-user $rmt_user $result
 	done
 fi
 
@@ -292,7 +293,10 @@ if [ -z $file ]; then
 	for line in $(cat $file); do
 		rmt_server=$line
 		echo ""
-		echo "User: $rmt_user on Server:$rmt_server"
+		echo -e "\t\t\t\t\t ===== $rmt_server ====="
+		echo ""
+
+		echo "User: $rmt_user"
 		echo -n "Passwd file: " 
 		ssh -q -t $user@$rmt_server grep $rmt_user /etc/passwd
 		echo -n "User and groups: "
@@ -308,7 +312,10 @@ else
 	for line in $(cat $file); do
 		rmt_server=$line
 		echo ""
-		echo "User: $rmt_user on Server:$rmt_server"
+		echo -e "\t\t\t\t\t ===== $rmt_server ====="
+		echo ""
+
+		echo "User: $rmt_user"
 		echo -n "Passwd file: "
 		ssh  $user@$rmt_server grep $rmt_user /etc/passwd
 		echo -n "User and groups: "
@@ -339,6 +346,9 @@ read file
 for line in $(cat $file); do
 	rmt_server=$line
 	echo ""
+	echo -e "\t\t\t\t\t ===== $rmt_server ====="
+	echo ""
+
 	echo "Setting password to corporate default for $username on $rmt_server"
 	ssh -q -t $user@$rmt_server sudo usermod -p $pass $username
 	result="$?"	
@@ -360,8 +370,11 @@ read file
 
 for line in $(cat $file); do
         rmt_server=$line
-        echo "Connected to $rmt_server:"
-        echo "$username account will be locked on $rmt_server"
+	echo ""
+	echo -e "\t\t\t\t\t ===== $rmt_server ====="
+	echo ""
+
+        echo "$username account will be locked"
         ssh -q -t $user@$rmt_server sudo usermod -L $username
         result="$?"
 
@@ -381,9 +394,12 @@ echo -ne "\t\t\t Enter file: "
 read file
 
 for line in $(cat $file); do
-        rmt_server=$line
-        echo "Connected to $rmt_server:"
-        echo "$username account will be ulocked on $rmt_server"
+        rmt_server=$line  
+	echo ""
+	echo -e "\t\t\t\t\t ===== $rmt_server ====="
+	echo ""
+
+        echo "$username account will be ulocked"
         ssh -q -t $user@$rmt_server sudo usermod -U $username
         result="$?"
 
@@ -405,7 +421,10 @@ read file
 for line in $(cat $file); do
         rmt_server=$line
 	echo ""
-        echo "$username account will be reset on $rmt_server"
+	echo -e "\t\t\t\t\t ===== $rmt_server ====="
+	echo ""
+
+        echo "Resetting $username password to default"
         ssh -q -t $user@$rmt_server sudo pam_tally2 --user=$username --reset
         result="$?"
 
@@ -429,7 +448,11 @@ echo -ne "\t\t\t Enter file: "
 read file
 
 for line in $(cat $file); do
-        rmt_server=$line
+        rmt_server=$line 
+	echo ""
+	echo -e "\t\t\t\t\t ===== $rmt_server ====="
+	echo ""
+
         echo "Adding $username to $group on $rmt_server"
         ssh -q -t $user@$rmt_server sudo usermod -a -G $group $username
         result="$?"
@@ -439,8 +462,12 @@ if [ $result == 0 ]; then
 	echo ""
         echo "$username added to $group on $rmt_server"
 	ssh -q -t $user@$rmt_server sudo id $username
+	# Send data to log file
+	echo $rmt_server add-to-group $username $result >> $log
 else
         echo "Could not add $username to $group"
+	# Send data to log file
+	echo $rmt_server add-to-group $username $result >> $log
 fi
 }
 
@@ -457,6 +484,9 @@ read file
 for line in $(cat $file); do
         rmt_server=$line
 	echo ""
+	echo -e "\t\t\t\t\t ===== $rmt_server ====="
+	echo ""
+
         echo "Change primary group for $username to $group on $rmt_server"
         ssh -q -t $user@$rmt_server sudo groupmod -g $group $username
         result="$?"
@@ -526,6 +556,7 @@ menu(){
 		pamtally2
 		;;
 	8)
+		check_servername
 		addtogroup
 		;;
 	9)
