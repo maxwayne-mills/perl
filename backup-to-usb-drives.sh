@@ -6,6 +6,7 @@
 
 # check to see if sdcard is mounted
 dest=$(mount | grep -i sdcard | awk '{print $3}')
+dest2=$(mount | grep -iw Lexar | awk '{print $3}')
 # find and use locally installed rsync binary
 rsync=`which rsync`
 
@@ -17,8 +18,13 @@ if [ $dest -a -rw ]; then
 	
 	# Display free and used space.
 	df -h $dest
-	exit 0
 else
 	echo "sdcard is not mounted, insert and mount sdcard before proceeding"
-	exit 0
 fi 
+
+# Check jump drive (Lexar)
+if [ $dest2 -a -rw ]; then
+	rsync -avz ~/Documents/personal/VOICE/*  $dest2/audio
+else
+	echo "Lexar drive "/media/oss/Lexar" is not mounted"
+fi
