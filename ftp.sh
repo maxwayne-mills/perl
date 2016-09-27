@@ -4,7 +4,7 @@
 host=192.168.1.240
 app=$(basename $0)
 file="Vagrantfile"
-logfile=/home/oss/repos/vagrant/ubuntu-64/log.txt
+logfile=$(pwd)/log.txt
 
 ftp -vd $host > ftp.session 2> ftp.failed <<EOF
 ascii
