@@ -4,7 +4,8 @@
 # Script to backup Web directory to Rsync.net
 # Created by Clarence Mills cmills@opensitesolutions.com
 # Open Source license
-# Relies on PKI keys installed on both servers
+# Relies on PKI public key installed on the remote end, if not you will be prompted
+# to provide the password.
 
 user=17847
 server=ch-s011.rsync.net
@@ -26,7 +27,7 @@ restore)
 list)
 	# List remote directories on backup server
 	echo "listing remote ...."
-	ssh 17847@ch-s011.rsync.net ls -la
+	ssh 17847@ch-s011.rsync.net ls -la $2
 	;;
 
 *)	
