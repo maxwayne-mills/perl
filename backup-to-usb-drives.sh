@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Backup files to a mounted sdcard
-# Script created on a Ubuntu trusty OS
+# Script created on a Ubuntu trusty OS should work on any Linux OS.
 # Dependencies are rsync
 
 # Collect and check USB drive information
