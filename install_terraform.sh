@@ -14,7 +14,7 @@ echo "Unzipping $dlfile"
 unzip $dlfile
 echo ""
 
-# Move to /usr/local/bin
+# Move to ~/bin
 if [ -d ~/bin ];then
 	echo "Moving terraform binary ($image_name) to ~/bin"
 	mv terraform ~/bin
