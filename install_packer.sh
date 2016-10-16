@@ -15,9 +15,15 @@ unzip $dlfile
 echo ""
 
 # Move to /usr/local/bin
-echo "Moving packer binary ($image_name) to /usr/local/bin"
-sudo mv packer /usr/local/bin
-echo ""
+if [ -d ~/bin ];then
+	echo "Moving packer binary ($image_name) to ~/bin"
+	mv packer ~/bin
+	echo ""
+else 
+	mkdir ~/bin
+	echo "Moving packer binary ($image_name) to ~/bin"
+	echo ""
+fi
 
 # Check to see if you can reference packer
 echo "Checking if packer is installed - sending command "packer""
