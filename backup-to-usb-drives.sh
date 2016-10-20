@@ -8,7 +8,13 @@
 dest=$(mount | grep -i sdcard | awk '{print $3}')
 dest2=$(mount | grep -iw Lexar | awk '{print $3}')
 dest3=$(mount | grep -iw Lexar1 | awk '{print $3}')
-options="-hrptuv --delete-before"
+options="-hrptuv --delete-before --delete-excluded --exclude /home/oss/Documents/googl-drive"
+
+# Sync password safe to in dropbox to google drive
+clear
+echo "Copying Password safe from Dropbox directory to google-drive"
+cp ~/Dropbox/*.psafe3 ~/google-drive/
+sleep 3
 
 # find and use locally installed rsync binary
 rsync=`which rsync`
