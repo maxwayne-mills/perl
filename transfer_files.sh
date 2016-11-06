@@ -1,4 +1,7 @@
 #!/bin/bash
+# Created November 6 2016
+# Transfer recordings from USB to folder (date) locally
+# Uses known unix commands 
 
 date=$(date +%G-%b-%d)
 mediahome=/media/oss
@@ -18,13 +21,11 @@ else
 fi
 }
 
-
 transfer(){
 ls -l $mediahome/RECORD/
 if [ -d $mediahome/RECORD/RECORD ]; then
 	echo "exist transfering files .."
 	mv -v $mediahome/RECORD/RECORD/* $destination/$date/$dir/
-	
 else
 	exit 0
 fi
@@ -50,4 +51,3 @@ else
 	echo "Media not mounted"
 	exit 0
 fi
-
