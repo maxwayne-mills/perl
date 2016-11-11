@@ -1,24 +1,26 @@
-#!/bin/bash -ex
+#!/bin/bash 
 
 # Tar,gzip and encrypt using gpg
 object="$1"
+rootdir=$(dirname $1)
+objectname=$(basename $1)
 encrypt="gpg -cv"
 
 encrypt_directory(){
 echo "Tar gzip directory"
-tar -czvf $(pwd)/$object.tar.gz $object
+tar -czvf $rootdir/$objectname.tar.gz $rootdir/$objectname
 echo "Encrypting Directoy using GPG"
-if [ -f $object.tar.gz ]; then
-	$encrypt $(pwd)/$object.tar.gz 
+if [ -f $rootdir/$objectname.tar.gz ]; then
+	$encrypt $rootdir/$objectname.tar.gz 
 else
 	echo "Directory did not get zipped"
 	exit 1
 fi
 
-if [ -f $(pwd)/$object.tar.gz.gpg ]; then
+if [ -f $rootdir/$objectname.tar.gz.gpg ]; then
 	echo "Cleaning up, removing $object"
-	rm -rf $object.tar.gz
-	rm -rf $object
+	rm -rf $rootdir/$objectname.tar.gz
+	rm -rf $rootdir/$objectname
 fi
 }
 
