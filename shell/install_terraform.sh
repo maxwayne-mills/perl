@@ -10,8 +10,14 @@ dlfile=$version
 image_name=$(echo $link | awk 'BEGIN {FS="\/"};{print $6}')
 binhome="/home/oss/bin"
 
+os=$(uname)
+#Clear screen
+clear
+
 # Get terraform: 
-echo "Downloading terraform: $image_name from $link ...."
+echo ""
+echo "Downloading terraform version $versionnumber: from $link ...."
+echo ""
 curl -O $link 
 echo ""
 
