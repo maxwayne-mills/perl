@@ -2,15 +2,24 @@
 
 # Generate PKI keys
 
-dir=/home/oss/.ssh/keys/
+dir=/home/oss/.ssh/keys
 keysize=4096
 type=rsa
 com=oss@opensitesolutions.com
 
+clear
 echo -n "Enter directory name: "
-read file
+read  directory
+if [ -d "$dir/$directory" ];then
+	echo -n "Enter file to store PKI keys: "
+	read file
+	ssh-keygen -t $type -b $keysize -C $com -f $dir/$directory/$file
+else
+	mkdir -v $dir/$directory
+	echo -n "Enter file to store PKI keys: "
+	read file
+	ssh-keygen -t $type -b $keysize -C $com -f $dir/$directory/$file
+fi
 
-ssh-keygen -t $type -b $keysize -C $com -f $dir/$file
-
-ls -l $dir/$file*
-cat $dir/$file.pub
+ls -l $dir/$directory/*
+cat $dir/$directory/$file.pub
