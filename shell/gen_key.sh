@@ -13,13 +13,17 @@ read  directory
 if [ -d "$dir/$directory" ];then
 	echo -n "Enter file to store PKI keys: "
 	read file
-	ssh-keygen -t $type -b $keysize -C $com -f $dir/$directory/$file
+	ssh-keygen -t $type -b $keysize -C $com -f "$dir/$directory/$file"
 else
-	mkdir -v $dir/$directory
+	mkdir -v "$dir/$directory"
 	echo -n "Enter file to store PKI keys: "
 	read file
-	ssh-keygen -t $type -b $keysize -C $com -f $dir/$directory/$file
+	ssh-keygen -t $type -b $keysize -C $com -f "$dir/$directory/$file"
 fi
 
-ls -l $dir/$directory/*
-cat $dir/$directory/$file.pub
+echo "$directory listing .."
+ls -l "$dir/$directory/"
+echo ""
+
+echo "Public key listing .."
+cat "$dir/$directory/$file.pub"
