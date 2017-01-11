@@ -1,45 +1,35 @@
 #!/bin/bash
 
-# October 25, 2016
-# Download and install terraform
-
-version=terraform_0.7.10_linux_amd64.zip
-versionnumber=$(echo $version | awk 'BEGIN {FS = "_"};{print $2}')
-link=https://releases.hashicorp.com/terraform/$versionnumber/$version
-dlfile=$version
+tversion="0.8.2"
+dlfile="terraform_"$tversion"_linux_amd64.zip"
+link="https://releases.hashicorp.com/terraform/$tversion/$dlfile"
 image_name=$(echo $link | awk 'BEGIN {FS="\/"};{print $6}')
-binhome="/home/oss/bin"
-
-os=$(uname)
-#Clear screen
-clear
 
 # Get terraform: 
-echo ""
-echo "Downloading terraform version $versionnumber: from $link ...."
-echo ""
+echo "Downloading terraform: $image_name from $link ...."
 curl -O $link 
 echo ""
 
 # unpack the downloaded zip file
 echo "Unzipping $dlfile"
-if [ -d "$binhome" ]; then
-	unzip -o $dlfile -d $binhome
+unzip $dlfile
+echo ""
+
+# Move to ~/bin
+if [ -d ~/bin ];then
+	echo "Moving terraform binary ($image_name) to ~/bin"
+	mv terraform ~/bin
 	echo ""
-else
-	mkdir $binhome
-	unzip $dlfile -o -d $binhome
-fi	
+else 
+	mkdir ~/bin
+	echo "Moving terraform binary ($image_name) to ~/bin"
+	echo ""
+fi
 
 # Check to see if you can reference terraform
-echo "Checking if terraform is installed"
-if [ -f $binhome/terraform ]; then
-	echo "Found terraform, sending command terraform -v "
-	terraform -v
-else
-	echo "Can't find terraform"
-	exit 1
-fi
+echo "Checking if terraform is installed - sending command "terraform""
+terraform version
+echo ""
 
 # Cleaning up
 echo "Cleaning up - removing $dlfile"
