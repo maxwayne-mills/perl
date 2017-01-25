@@ -11,4 +11,3 @@ expect "Re-enter new Password:"
 send "$password\r"
 expect "passwd: password successfully changed for $username"
 send "exit\n"
- 
