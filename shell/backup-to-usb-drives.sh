@@ -54,6 +54,7 @@ if [ $dest -a -rw ]; then
 	
 	echo "" && echo "File System usage"
 	df -h $dest
+	sleep 3
 else
 	echo "sdcard is not mounted, insert and mount sdcard before proceeding"
 	sleep 3
@@ -84,8 +85,15 @@ if [ $dest2 -a -rw ]; then
 		sleep 3
 	fi
 
-	echo "" && echo "File System usage"
+	# Back up repository information
+	echo "" && echo "Backup up Repository directory"
+	mkdir $dest2/respositories
+   	rsync $options ~/repositories/ $dest2/repositories
+	sleep 3
+
+	echo "" && echo "$dest2: File System usage"
 	df -h $dest2
+	sleep 3
 else
 	echo ""
 	echo "Lexar drive /media/oss/Lexar is not mounted"
@@ -124,4 +132,15 @@ else
 	echo "Lexar jump drive 2 /media/oss/Lexar1 is not mounted"
 	sleep 3
 	exit
+fi
+
+# Back up repository information
+if [ $dest2 -a -rw ]; then
+	echo "" && echo "Backup up Repository directory"
+   	rsync $options ~?/repositories/ $dest2/repositories
+	sleep 3
+else
+	mkdir ~/$dest2/respositories
+   	rsync $options /home/oss/repositories $dest2/repositories
+	sleep 3
 fi
