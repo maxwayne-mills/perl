@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 
-set username [lindex $argv 0] 
-set server [lindex $argv 1] 
+set username [lindex $argv 0]
+set server [lindex $argv 1]
 set password "changeme"
 
 spawn /home/oss/repos/clients/account-management.sh -o $server "pfexec passwd $username"
