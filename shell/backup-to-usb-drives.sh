@@ -137,7 +137,7 @@ fi
 # Back up repository information
 if [ $dest2 -a -rw ]; then
 	echo "" && echo "Backup up Repository directory"
-   	rsync $options ~?/repositories/ $dest2/repositories
+   	rsync $options ~/repositories/ $dest2/repositories
 	sleep 3
 else
 	mkdir ~/$dest2/respositories
