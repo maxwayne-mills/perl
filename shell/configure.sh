@@ -10,7 +10,8 @@ key=$(which create_ssh_key.sh)
 # Create keys to be imported within the environent, keys will need to be imported within GITHUB security settings.
 $key
 
-# Create inventory
+# Create Ansible inventory file
+echo "Creating Ansible configuration file"
 cd ansible
 echo "localhost  ansible_ssh_host=127.0.0,1" > inventory
 
