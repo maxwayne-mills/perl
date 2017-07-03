@@ -8,12 +8,16 @@
 dest=$(mount | grep -i sdcard | awk '{print $3}')
 dest2=$(mount | grep -iw Lexar | awk '{print $3}')
 dest3=$(mount | grep -iw Lexar1 | awk '{print $3}')
-options="-hrptuv --delete-before --delete-excluded --exclude /home/oss/Documents/voice/*"
+#options="-hrptuv --delete-before --delete-excluded --exclude /home/oss/Documents/voice/*"
+options="-aivv --delete-before --delete-excluded --exclude /home/oss/Documents/voice/*"
 
-# Sync password safe to in dropbox to google drive
+# Sync password safe to dropbox and google drive
 clear
-echo "Copying Password safe from Dropbox directory to google-drive"
+echo "Copying Password safe to google-drive"
 cp ~/Dropbox/*.psafe3 ~/google-drive/
+
+echo "Copying Password safe to Dropbox"
+cp ~/Dropbox/*.psafe3 ~/Documents 
 sleep 3
 
 # find and use locally installed rsync binary
@@ -44,11 +48,11 @@ if [ $dest -a -rw ]; then
 
 	echo "" && echo "Backup passwd file"
 	if [ -d $dest/passwordsafe ];then
-		rsync $options ~/Dropbox/*.psafe3 $dest/passwordsafe
+		rsync $options ~/Documents/*.psafe3 $dest/passwordsafe
 		sleep 3
 	else 
 		mkdir $dest/passwordsafe
-		rsync $options ~/Dropbox/*.psafe3 $dest/passwordsafe
+		rsync $options ~/Documents/*.psafe3 $dest/passwordsafe
 		sleep 3
 	fi
 	
@@ -77,11 +81,11 @@ if [ $dest2 -a -rw ]; then
 
 	echo "" && echo "Backup passwd file"
 	if [ -d $dest2/passwordsafe ];then
-		rsync $options ~/Dropbox/*.psafe3 $dest2/passwordsafe
+		rsync $options ~/Documents/*.psafe3 $dest2/passwordsafe/
 		sleep 3
 	else 
 		mkdir $dest/passwordsafe
-		rsync $options ~/Dropbox/*.psafe3 $dest2/passwordsafe
+		rsync $options ~/Documents/*.psafe3 $dest2/passwordsafe
 		sleep 3
 	fi
 
@@ -116,17 +120,18 @@ if [ $dest3 -a -rw ]; then
 	sleep 3
 
 	echo "" && echo "Backup passwd file"
-	if [ -d $dest3/passwordsafe ];then
-		rsync $options ~/Dropbox/*.psafe3 $dest3/passwordsafe
+	if [ -d $dest3/fe ];then
+		rsync $options ~/Documents/*.psafe3 $dest3/passwordsafe/
 		sleep 3
 	else 
 		mkdir $dest3/passwordsafe
-		rsync $options ~/Dropbox/*.psafe3 $dest3/passwordsafe
+		rsync $options ~/Documents/*.psafe3 $dest3/passwordsafe/
 		sleep 3
 	fi
 
 	echo "" && echo "File System usage"
 	df -h $dest3
+	sleep 3
 else
 	echo "" &&  echo "Error"
 	echo "Lexar jump drive 2 /media/oss/Lexar1 is not mounted"

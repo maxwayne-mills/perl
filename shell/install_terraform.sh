@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tversion="0.8.7"
+tversion="0.9.10"
 dlfile="terraform_"$tversion"_linux_amd64.zip"
 link="https://releases.hashicorp.com/terraform/$tversion/$dlfile"
 image_name=$(echo $link | awk 'BEGIN {FS="\/"};{print $6}')
