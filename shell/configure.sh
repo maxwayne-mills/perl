@@ -25,8 +25,9 @@ echo "Enter Vagrant machine name: "
 read vagrant_machine_name
 
 echo "Enter wireless card name: "
+read wifi_card
 
-ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254 vagrant_machine_name=$vagrant_machine_name"
+ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254 vagrant_machine_name=$vagrant_machine_name wifi_card=$wifi_card"
 
 # Set up environment 
 cd ../
