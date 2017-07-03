@@ -4,8 +4,8 @@
 clear
 iwconfig 
 nmcli dev wifi
-sleep 5
 
-# Show link quality
-echo "Showing link quality"
-watch -n 1 cat /proc/net/wireless
+echo ""
+echo "Show link quality"
+#watch -n 1 cat /proc/net/wireless
+cat /proc/net/wireless
