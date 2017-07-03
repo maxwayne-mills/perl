@@ -16,6 +16,7 @@ cd ansible
 echo "localhost  ansible_ssh_host=127.0.0,1" > inventory
 
 # Create Vagrant file
+echo ""
 echo "Enter Vagrant machine name:"
 read vagrant_machine_name
 
