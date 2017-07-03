@@ -16,7 +16,10 @@ cd ansible
 echo "localhost  ansible_ssh_host=127.0.0,1" > inventory
 
 # Create Vagrant file
-ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254"
+echo "Enter Vagrant machine name:"
+read vagrant_machine_name
+
+ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254 vagrant_machine_name=$vagrant_machine_name"
 
 # Set up environment 
 cd ../
