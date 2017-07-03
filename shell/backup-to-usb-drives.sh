@@ -9,7 +9,7 @@ dest=$(mount | grep -i sdcard | awk '{print $3}')
 dest2=$(mount | grep -iw Lexar | awk '{print $3}')
 dest3=$(mount | grep -iw Lexar1 | awk '{print $3}')
 #options="-hrptuv --delete-before --delete-excluded --exclude /home/oss/Documents/voice/*"
-options="-aivv --delete-before --delete-excluded --exclude /home/oss/Documents/voice/*"
+options="-av --delete-before --delete-excluded --exclude /home/oss/Documents/voice/*"
 
 # Sync password safe to dropbox and google drive
 clear
