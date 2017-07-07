@@ -24,12 +24,24 @@ sleep 2.5
 echo "Enter Vagrant machine name: "
 read vagrant_machine_name
 
+echo "Listing your ethernet cards"
+ifconfig
+echo ""
 echo "Enter wireless card name: "
 read wifi_card
 
-ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254 vagrant_machine_name=$vagrant_machine_name wifi_card=$wifi_card"
+ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254 vagrant_machine_name=$vagrant_machine_name wifi_card=$wifi_card" -vvvv
 
 # Set up environment 
 cd ../
-mv ansible/Vagrantfile .
-vagrant up
+mv /tmp/Vagrantfile .
+
+# Copy setup file 
+cp ~/repositories/scripts/shell/setup.yml .
+
+if [ -f Vagrantfile ]; then
+	vagrant up
+else
+	echo "can't find vagrant file"
+	exit 1
+fi
