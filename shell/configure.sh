@@ -2,6 +2,7 @@
 ## Set up working enviroment 
 
 # Clone ansible repository
+echo "Dowloading Ansible git repository"
 git clone git@github.com:becomeonewiththecode/ansible.git
 
 ## Create .ssh directory and private and public keys
@@ -21,10 +22,14 @@ echo "localhost  ansible_ssh_host=127.0.0,1" > inventory
 sleep 2.5
 
 # Create Vagrant file
+
+echo "Listing current vagrant machines"
+vboxmanage list vms
+echo ""
 echo "Enter Vagrant machine name: "
 read vagrant_machine_name
 
-echo "Listing your ethernet cards"
+echo "Listing ethernet cards"
 ifconfig
 echo ""
 echo "Enter wireless card name: "
@@ -41,6 +46,8 @@ cp ~/repositories/scripts/shell/setup.yml .
 
 if [ -f Vagrantfile ]; then
 	vagrant up
+	vagrant status
+	vagrant ssh-config
 else
 	echo "can't find vagrant file"
 	exit 1
