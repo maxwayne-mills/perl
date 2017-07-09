@@ -1,6 +1,9 @@
 #/bin/bash
 ## Set up working enviroment 
 
+echo "Creating Virtual environment"
+sleep 1.5
+
 # Clone ansible repository
 echo "Dowloading Ansible git repository"
 git clone git@github.com:becomeonewiththecode/ansible.git
@@ -21,9 +24,15 @@ cd ansible
 echo "localhost  ansible_ssh_host=127.0.0,1" > inventory
 sleep 2.5
 
-# Create Vagrant file
+# List vagrant box availble on system
+echo "Listing local available Vagrant box's"
+vagrant box list
 
-echo "Listing current vagrant machines"
+echo -n "Select a vagrant box from the list above: "
+read vbox_image
+
+# Create Vagrant file
+echo "Listing current vagrant servers"
 vboxmanage list vms
 echo ""
 echo "Enter Vagrant machine name: "
@@ -35,7 +44,7 @@ echo ""
 echo "Enter wireless card name: "
 read wifi_card
 
-ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254 vagrant_machine_name=$vagrant_machine_name wifi_card=$wifi_card" -vvvv
+ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254 vbox_image=$vbox_image vagrant_machine_name=$vagrant_machine_name wifi_card=$wifi_card" -vvvv
 
 # Set up environment 
 cd ../
@@ -45,10 +54,16 @@ mv /tmp/Vagrantfile .
 cp ~/repositories/scripts/shell/setup.yml .
 
 if [ -f Vagrantfile ]; then
-	vagrant up
-	vagrant status
-	vagrant ssh-config
+	echo "Do you want to start the Virtual enfironment"
+	read answer
+	if [ "$answer" == "Y" ] || [ $answer == "y" ]; then
+		vagrant up
+		vagrant status
+		vagrant ssh-config
+	else
+		echo "Virtual environment built, exiting ...."
+	fi
 else
-	echo "can't find vagrant file"
+	echo "can't find vagrant file, exiting ... "
 	exit 1
 fi
