@@ -1,6 +1,6 @@
 #/bin/bash
-## Set up working enviroment 
-
+## Set up working enviroment
+clear
 echo "Creating Virtual environment"
 sleep 1.5
 
@@ -14,12 +14,14 @@ key=$(which create_ssh_key.sh)
 # Create keys to be imported within the environent, keys will need to be imported within GITHUB security settings.
 clear
 echo "Creating SSH keys .... "
+echo ""
 $key
 sleep 2.5
 
 # Create Ansible inventory file
 clear
 echo "Creating Ansible configuration file"
+echo ""
 cd ansible
 echo "localhost  ansible_ssh_host=127.0.0,1" > inventory
 sleep 2.5
@@ -46,11 +48,11 @@ read wifi_card
 
 ansible-playbook playbooks/create_vagrant_file.yml -e "servername=localhost ip_address=192.168.1.254 vbox_image=$vbox_image vagrant_machine_name=$vagrant_machine_name wifi_card=$wifi_card" -vvvv
 
-# Set up environment 
+# Set up environment
 cd ../
 mv /tmp/Vagrantfile .
 
-# Copy setup file 
+# Copy setup file
 cp ~/repositories/scripts/shell/setup.yml .
 
 if [ -f Vagrantfile ]; then
