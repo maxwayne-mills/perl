@@ -16,8 +16,6 @@ else
 fi
 }
 
-check_for_idkeys
-
 Check whether .ssh directory exists
 if [ -d "$destdir/.ssh" ]; then
 	echo "SSH Directory exists creating key"
