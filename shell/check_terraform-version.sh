@@ -2,7 +2,7 @@
 
 clear
 echo "Downloading terraform version information ..."
-curl -s https://releases.hashicorp.com/terraform/ > terraformv
+curl --write-out '%{http_code}' -s https://releases.hashicorp.com/terraform/ > terraformv
 grep -i terraform terraformv | awk 'BEGIN {FS="/"};{print $3}' > tversion
 version=$(sed '/^$/d' tversion | head -n 1)
 
