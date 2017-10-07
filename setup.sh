@@ -4,6 +4,10 @@
 set -e
 clear
 
+echo updating and upgrading packages
+sudo apt-get -y update
+sudo apt-get -y upgrade
+
 # Install Application
 sudo apt-get -y install tree
 sudo apt-get -y install rsync
@@ -19,7 +23,8 @@ sudo apt-get -y install acpi
 # Install liquid-prompt
 cd /tmp
 git clone https://github.com/nojhan/liquidprompt.git
-source /tmp/liquidprompt/liquidprompt
+cp -Rvp /tmp/liquidprompt ~/bin
+source ~/bin/liquidprompt/liquidprompt
 
 # Set permissions
 sudo chown -R cmills:cmills ~
@@ -47,6 +52,7 @@ cd /tmp/scripts/shell
 cp show_wireless.sh ~/bin
 cp manage-vm.sh ~/bin
 cp manage_virt.sh ~/bin
+cp backup-to-usb-drives.sh ~/bin
 
 # Install Packer
 ./packer_install.sh
