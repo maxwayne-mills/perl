@@ -114,6 +114,10 @@ else
 	chmod +x ~/bin/dropbox.py
 fi
 
+# Install passsword gorilla
+curl -L http://ftp.us.debian.org/debian/pool/main/p/password-gorilla/password-gorilla_1.5.3.7-1_all.deb --progress-bar -o password-gorilla.deb
+sudo dpkg -i password-gorilla.deb
+
 # Cleanup
 rm -rf /tmp/workstation
 rm -rf /tmp/liquidprompt
