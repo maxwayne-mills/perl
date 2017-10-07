@@ -9,6 +9,8 @@ sudo apt-get -y update
 sudo apt-get -y upgrade
 
 # Install Application
+# Gnome Control Center
+sudo apt install gnome-control-center gnome-online-accounts
 sudo apt-get -y install tree
 sudo apt-get -y install rsync
 sudo apt-get -y install curl
