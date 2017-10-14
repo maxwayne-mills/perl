@@ -8,7 +8,15 @@ echo updating and upgrading packages
 sudo apt-get -y update
 sudo apt-get -y upgrade
 
-# Install Application
+# Envchain dependencies
+#sudo apt-get -y install libsecret-1-0
+sudo apt-get -y insall libsecret-1-dev
+#sudo apt-get -y install libsecret-common
+sudo apt-get -y install libreadline-dev
+#sudo apt-get -y install readline-common
+#sudo apt-get -y install libreeadline-common
+
+# Install Applications
 # Gnome Control Center
 sudo apt install gnome-control-center gnome-online-accounts
 sudo apt-get -y install tree
@@ -17,7 +25,6 @@ sudo apt-get -y install curl
 sudo apt-get -y install git
 sudo apt-get -y install python-pip
 sudo apt-get -y install screen
-#sudo apt-get -y install google-drive-ocamlfuse
 sudo apt-get -y install golang
 
 # Liquid-prompt requirement
@@ -25,9 +32,13 @@ sudo apt-get -y install acpi
 # Install liquid-prompt
 cd /tmp
 git clone https://github.com/nojhan/liquidprompt.git
-cp -Rvp /tmp/liquidprompt ~/bin
-source ~/bin/liquidprompt/liquidprompt
-
+if [ -d ~/repositories ];then
+	cp -Rvp /tmp/liquidprompt ~/repositories
+	source ~/bin/liquidprompt/liquidprompt
+else
+	mkdir ~/repositories
+	cp -Rvp /tmp/liquidprompt ~/repositories
+fi
 # Set permissions
 sudo chown -R cmills:cmills ~
 
@@ -86,7 +97,7 @@ trap 'echo - ""; "     removing uncompleted download"; rm slack.deb' SIGINT SIGT
 clear
 echo "Downloading Slack from $dl"
 echo ""
-curl -o $dir/slack.deb $dl 
+curl -o $dir/slack.deb $dl
 
 # Install slack
 echo ""
@@ -104,8 +115,8 @@ fi
 arch=$(uname -a | awk 'BEGIN {fs=" "};{print $12}')
 if [ "$arch" = "x86_64" ];then
 	dropboxlink=https://www.dropbox.com/download?plat=lnx.x86_64
-	cd ~ && wget -O - $dropboxlink | tar xzvf - 
-	
+	cd ~ && wget -O - $dropboxlink | tar xzvf -
+
 	echo "Starting dropbox"
 	~/.dropbox-dist/dropboxd &
 	curl -L  https://www.dropbox.com/download?dl=packages/dropbox.py --progress-bar -o dropbox.py
@@ -113,13 +124,32 @@ if [ "$arch" = "x86_64" ];then
 	chmod +x ~/bin/dropbox.py
 else
 	droplink=https://www.dropbox.com/download?plat=lnx.x86_64
-	cd ~ && wget -O - $droplink | tar xzvf - 
-	
+	cd ~ && wget -O - $droplink | tar xzvf -
+
 	echo "Starting dropbox"
 	~/.dropbox-dist/dropboxd &
 	curl -L  https://www.dropbox.com/download?dl=packages/dropbox.py --progress-bar -o dropbox.py
 	mv dropbox.py ~/bin
 	chmod +x ~/bin/dropbox.py
+fi
+
+## update bash script
+if [ -f ~/.bashrc ]; then
+	cat <<EOF > ~/.bashrc
+		# Start dropbox if it's not running
+		app=$(which dropbox.py)
+		dropbox_status=$($app status)
+
+		if [ "$dropbox_status" == "Dropbox isn't running!" ];then
+			echo "Starting Dropbox ..."
+			$app start
+			$app status
+		else
+			echo "Dropbox running"
+		fi
+	EOF
+else
+	echo "Did not find bashrc, not updating"
 fi
 
 # Install passsword gorilla
