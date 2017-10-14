@@ -8,12 +8,13 @@ usage(){
 
   echo ""
   echo "Usage:"
-  echo -e "\t$app_name -l | -c | -g | -h"
+  echo -e "\t$app_name -s | -c | -g | -l | -h"
   echo ""
   echo "Options:"
-  echo -e "\t-l \t Prompt for AWS credentials"
+  echo -e "\t-s \t Prompt for AWS credentials"
   echo -e "\t-c \t Show AWS credentials"
   echo -e "\t-g \t Show gpg secure keys" 
+  echo -e "\t-l \t launch new shell loaded with envchain namespace variables" 
   echo -e "\t-h \t Show help screen" 
   echo ""
 }
@@ -32,8 +33,12 @@ check_gpg(){
 
 }
 
+launc_shell(){
+  envchain aws bash
+}
+
 case $1 in
--l)
+-s)
  	load_env
 	;;
 -c)
@@ -41,6 +46,9 @@ case $1 in
 	;;
 -g)
 	check_gpg
+	;;
+-l)
+	launch_shell
 	;;
 *)
 	usage
