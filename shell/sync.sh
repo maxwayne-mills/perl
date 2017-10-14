@@ -1,4 +1,4 @@
-#! /bin/sh -x
+#! /bin/sh
 
 # Created December 26, 2015
 # Script to backup Web directory to Rsync.net
