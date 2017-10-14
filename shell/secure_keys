@@ -13,6 +13,7 @@ usage(){
   echo "Options:"
   echo -e "\t-l \t Prompt for AWS credentials"
   echo -e "\t-c \t Show AWS credentials"
+  echo -e "\t-g \t Show gpg secure keys" 
   echo -e "\t-h \t Show help screen" 
   echo ""
 }
