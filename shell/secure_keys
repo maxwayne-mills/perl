@@ -33,7 +33,7 @@ check_gpg(){
 
 }
 
-launc_shell(){
+launch_shell(){
   envchain aws bash
 }
 
