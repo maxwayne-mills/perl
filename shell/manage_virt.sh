@@ -3,7 +3,7 @@
 ## Virtualbox, vagrant, ansible
 
 ## 
-set -xv
+set -e
 
 marker="## Created by OpenSiteSolutions: $(basename $0)"
 file=Vagrantfile
@@ -16,6 +16,7 @@ vagrant box list | sort -u | awk '{print $1}'
 build_vagrantfile(){
 vm-box=$1
 vm-name=$2
+	cd /tmp
 	echo "Creating Vagranfile"
 	echo $marker >> $file
 	echo "" >> $file
@@ -42,16 +43,16 @@ case $1 in
 	list_box
 	echo ""
 
-	echo -n "Enter name of vagrant box"
+	echo -n "Enter name of vagrant box: "
 	read box 
 
-	echo -n "Enter name of the server"
+	echo -n "Enter name of the server: "
 	read server
 
 
 	if [ -f "$file" ]; then
-		echo "Direcoty: $(pwd)"
-		echo "Found existing vagrant $file, remove it"
+		echo "Directory: $(pwd)"
+		echo "Found existing vagrant $file, remove it Y/N: "
 		echo -n "If you choose Y, then this will also destroy the existing environment Y/N: "
 		read value
 		if [ "$value" == "Y" -o "$value" == "y" ]; then
@@ -76,7 +77,7 @@ case $1 in
 	fi
 
 	echo ""
-	echo -n "Do you want to bring up the environment Y/N ?:"
+	echo -n "Do you want to bring up the environment Y/N ?: "
 	read value
 
 	if [ "$value" == "Y"  -o "$value" == "y" ]; then
