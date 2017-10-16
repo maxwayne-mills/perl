@@ -3,6 +3,9 @@
 
 chain=$(which envchain)
 
+## Clear screen
+clear
+
 usage(){
   app_name=$(basename $0)
 
