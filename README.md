@@ -1,4 +1,4 @@
-Alt - Personal scripts
+Alt-Personal scripts
 
 - Reduce
-- Reduce
+---Reduce
