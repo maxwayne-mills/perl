@@ -1,5 +1,5 @@
 #/bin/bash -eux
-ver="1.9.7"
+ver="2.0.1"
 link="https://releases.hashicorp.com/vagrant/$ver/vagrant_"$ver"_x86_64.deb"
 dlfile=vagrant_"$ver"_x86_64.deb
 image_name=$(echo $link | awk 'BEGIN {FS="\/"};{print $6}')
