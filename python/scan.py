@@ -3,9 +3,15 @@ import socket
 
 list = ['www.clarencemills.com','www.millsresidence.com','www.opensitesolutions.com','www.toolsforthecloud.com']
 
+def get_ops():
+    s = socket.socket()
+    s.connect((server_name,22))
+    result = s.recv(1024)
+    return result
+
 for server_name in list:
     s = socket.socket()
     s.connect((server_name,22))
     result = s.recv(1024)
-    print ("received from %s: %s") % (server_name,result)
+    print ("received from %s: %s") % (server_name,result),  # the comma at the end removes the trailing newline
     s.close()
