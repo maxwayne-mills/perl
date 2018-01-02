@@ -2,7 +2,6 @@
 import socket
 
 list = ['www.clarencemills.com','www.millsresidence.com','www.opensitesolutions.com','www.toolsforthecloud.com']
-numlist = len(list)
 
 for server_name in list:
     s = socket.socket()
