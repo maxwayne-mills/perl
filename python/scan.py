@@ -1,10 +1,14 @@
 #!/usr/bin/env python
 import socket
-s = socket.socket()
 
-list = ['www.clarencemills.com', 'www.millsresidence.com']
-print(list[:])
-s.connect(("www.clarencemills.com",22))
-result = s.recv(1024)
-print ("received from www.clarencemills.com: %s") % result
-s.close()
+list = ['www.clarencemills.com','www.millsresidence.com','www.opensitesolutions.com','www.toolsforthecloud.com']
+numlist = len(list)
+
+num = 0
+for server_name in list:
+    s = socket.socket()
+    s.connect((server_name,22))
+    result = s.recv(1024)
+    print ("received from %s: %s") % (server_name,result)
+    s.close()
+    num += num
