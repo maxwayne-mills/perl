@@ -3,13 +3,13 @@ import socket
 
 list = ['www.clarencemills.com','www.millsresidence.com','www.opensitesolutions.com','www.toolsforthecloud.com']
 
-def get_ops(server_name): # this function is untested
+def get_ops(server_name, port): # this function is untested
+    port = 22
     s = socket.socket()
-    s.connect((server_name,22))
+    s.connect((server_name,port))
     result = s.recv(1024)
     print ("Openssh version on %s: \t%s") % (server_name,result),  # the comma at the end removes the trailing newline
-    return result
     s.close()
 
 for server_name in list:
-    get_ops(server_name)
+    get_ops(server_name, 22)
