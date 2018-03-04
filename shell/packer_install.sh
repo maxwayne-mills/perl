@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-ver="1.1.0"
+ver="1.2.0"
 link=https://releases.hashicorp.com/packer/"$ver"/packer_"$ver"_linux_amd64.zip
 dlfile=packer_"$ver"_linux_amd64.zip
 image_name=$(echo $link | awk 'BEGIN {FS="\/"};{print $6}')
